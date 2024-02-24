@@ -1,0 +1,16 @@
+﻿<script src="~/lib/ace-js/ace.js" asp-append-version="true"></script>
+<script type="text/javascript">
+    var editor = ace.edit("editor", {
+        theme: 'ace/theme/tomorrow_night',
+        mode: 'ace/mode/xml',
+        minLines: 10,
+        maxLines: 25
+    });
+
+    var textArea = document.getElementById('editorInput');
+    editor.getSession().setValue(textArea.value);
+
+    editor.getSession().on('change', function () {
+        textArea.value = editor.getSession().getValue();
+    });
+</script>

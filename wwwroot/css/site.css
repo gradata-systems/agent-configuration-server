@@ -1,0 +1,64 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.navbar-brand {
+    color: #333;
+}
+
+.navbar-brand:hover {
+    color: #000;
+}
+
+/* Custom overrides */
+
+label.control-label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+input[type='submit'], a.btn.btn-primary, a.btn.btn-secondary, a.btn.btn-danger {
+    margin: 20px 10px 10px 0;
+}
+
+a.btn.delete {
+    float: right;
+}
+
+.fragment-cell {
+    max-height: 50px;
+    overflow: hidden;
+}
+
+.nowrap {
+    text-wrap: nowrap;
+}
+
+.navbar-nav > .nav-item {
+    padding: 0 5px;
+    transition: background-color .1s;
+    border-radius: 5px;
+}
+
+.navbar-nav > .nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}

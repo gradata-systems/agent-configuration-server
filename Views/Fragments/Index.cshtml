@@ -1,0 +1,70 @@
+﻿@model IEnumerable<AgentConfigurationServer.Models.Fragment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Configuration Fragments</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Value)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Enabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Modified)
+            </th>
+            <th>Linked Targets</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderBy(item => item.Id))
+        {
+            <tr>
+                <td class="nowrap">
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <div class="fragment-cell">
+                        @Html.DisplayFor(modelItem => item.Value)
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Enabled)
+                </td>
+                <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td class="nowrap" title="Last modified by @Html.DisplayFor(modelItem => item.ModifiedBy)">
+                    @Html.DisplayFor(modelItem => item.Modified)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LinkedTargets)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
