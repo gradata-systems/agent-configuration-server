@@ -62,3 +62,7 @@ a.btn.delete {
 .navbar-nav > .nav-item:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
+
+.form-check-input, .form-check-label, .form-check-label > input {
+    cursor: pointer;
+}

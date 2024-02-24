@@ -50,7 +50,7 @@
                     </div>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Enabled)
+                    <input class="form-check-input" asp-for="@item.Enabled" disabled />
                 </td>
                 <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
                     @Html.DisplayFor(modelItem => item.Created)
