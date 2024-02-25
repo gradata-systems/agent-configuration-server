@@ -1,4 +1,5 @@
-﻿using AgentConfigurationServer.Models;
+﻿using AgentConfigurationServer.Configuration;
+using AgentConfigurationServer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgentConfigurationServer
@@ -19,14 +20,14 @@ namespace AgentConfigurationServer
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string? connectionString = _configuration.GetConnectionString("Default");
-            if (!string.IsNullOrEmpty(connectionString))
+            DataSourceConfiguration? config = _configuration.GetSection("DataSource").Get<DataSourceConfiguration>();
+            if (config != null)
             {
-                optionsBuilder.UseMySQL(connectionString);
+                optionsBuilder.UseMySQL(config.GetConnectionString());
             }
             else
             {
-                throw new Exception("Database connection string not specified");
+                throw new Exception("Data source configuration not specified");
             }
         }
     }
