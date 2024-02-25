@@ -168,6 +168,9 @@ namespace AgentConfigurationServer
             }
         }
 
+        /// <summary>
+        /// Allow the HTTP context to be accessed for the purpose of logging user claims
+        /// </summary>
         private static void ConfigureAuthorisation(WebApplicationBuilder builder)
         {
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

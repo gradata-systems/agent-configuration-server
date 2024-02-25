@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using AgentConfigurationServer.Models;
 using Microsoft.AspNetCore.Authorization;
-using Serilog.Events;
 using Serilog;
 
 namespace AgentConfigurationServer.Controllers
