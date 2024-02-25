@@ -1,4 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+using AgentConfigurationServer.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using NuGet.Packaging;
 
 namespace AgentConfigurationServer
 {
@@ -9,6 +12,8 @@ namespace AgentConfigurationServer
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<AppDbContext>();
+
+            ConfigureAuthentication(builder);
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -28,6 +33,7 @@ namespace AgentConfigurationServer
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -35,6 +41,31 @@ namespace AgentConfigurationServer
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void ConfigureAuthentication(WebApplicationBuilder builder)
+        {
+            OpenIdConfiguration? config = builder.Configuration.GetSection("OpenId").Get<OpenIdConfiguration>();
+            if (config != null)
+            {
+                builder.Services
+                    .AddAuthentication(options =>
+                    {
+                        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    })
+                    .AddCookie()
+                    .AddOpenIdConnect(options =>
+                    {
+                        options.Authority = config.AuthorityUrl;
+                        options.ClientId = config.ClientId;
+                        options.ClientSecret = config.ClientSecret;
+                        options.ResponseType = "code";
+                        options.Scope.AddRange(config.Scopes);
+                        options.SaveTokens = true;
+                        options.UsePkce = true;
+                    });
+            }
         }
     }
 }

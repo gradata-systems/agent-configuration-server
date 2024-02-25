@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgentConfigurationServer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AgentConfigurationServer.Controllers
 {
+    [Authorize]
     public class TargetsController : Controller
     {
         private readonly AppDbContext _context;
