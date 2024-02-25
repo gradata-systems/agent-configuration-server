@@ -1,0 +1,57 @@
+﻿@model ACS.Shared.Models.Fragment
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Configuration Fragment</h4>
+<hr />
+<div class="row">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-4">
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Enabled" /> @Html.DisplayNameFor(model => model.Enabled)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <div class="form-control">@Html.DisplayFor(model => model.Id)</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Value" class="control-label"></label>
+            <div id="editor" asp-for="Value" class="form-control"></div>
+            <textarea id="editorInput" asp-for="Value" hidden></textarea>
+            <span asp-validation-for="Value" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="Created" />
+        <input type="hidden" asp-for="CreatedBy" />
+        <input type="hidden" asp-for="Modified" />
+        <input type="hidden" asp-for="ModifiedBy" />
+        <br />
+        @{
+            await Html.RenderPartialAsync("_TargetSelectionList");
+        }
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger delete">Delete</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_TextEditorScriptsPartial");
+    }
+}

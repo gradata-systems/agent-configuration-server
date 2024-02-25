@@ -1,0 +1,68 @@
+﻿@model IEnumerable<ACS.Shared.Models.Target>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Targets</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Enabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Modified)
+            </th>
+            <th>Linked Fragments</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderBy(item => item.Id))
+        {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td class="nowrap">
+                    @Html.DisplayFor(modelItem => item.AgentName)
+                </td>
+                <td>
+                    <input class="form-check-input" asp-for="@item.Enabled" disabled />
+                </td>
+                <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td class="nowrap" title="Last modified by @Html.DisplayFor(modelItem => item.ModifiedBy)">
+                    @Html.DisplayFor(modelItem => item.Modified)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LinkedFragments)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

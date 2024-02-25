@@ -1,0 +1,29 @@
+﻿@using ACS.Shared.Models
+@{
+    IEnumerable<TargetSelection> targetSelections = ViewBag.TargetSelections;
+}
+
+<h3>Linked targets</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-sm-1">Linked</th>
+            <th class="col-sm-2">Target Id</th>
+            <th class="col-sm-5">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @targetSelections)
+        {
+            <tr>
+                <td>
+                    <input class="form-check-input" asp-for="@item.Linked" value="@item.Target.Id" name="linkedTargetIds" />
+                </td>
+                <td>
+                    <a asp-controller="Targets" asp-action="Edit" asp-route-id="@item.Target.Id" target="_blank">@item.Target.Id</a>
+                </td>
+                <td class="col col-5">@item.Target.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
