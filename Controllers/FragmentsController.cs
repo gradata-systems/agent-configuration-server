@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using AgentConfigurationServer.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Principal;
+using Serilog;
 
 namespace AgentConfigurationServer.Controllers
 {
@@ -67,14 +69,16 @@ namespace AgentConfigurationServer.Controllers
                 DateTime now = DateTime.Now;
                 fragment.Created = now;
                 fragment.Modified = now;
-                fragment.CreatedBy = "test.user";
-                fragment.ModifiedBy = "test.user";
+                fragment.CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+                fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
 
                 _context.Add(fragment);
                 await _context.SaveChangesAsync();
 
                 await UpdateLinkedTargets(fragment);
                 await _context.SaveChangesAsync();
+
+                Log.Information("Created configuration fragment {Fragment}", fragment);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -120,11 +124,13 @@ namespace AgentConfigurationServer.Controllers
                 try
                 {
                     fragment.Modified = DateTime.Now;
-                    fragment.ModifiedBy = "test.user";
+                    fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
 
                     _context.Update(fragment);
                     await UpdateLinkedTargets(fragment);
                     await _context.SaveChangesAsync();
+
+                    Log.Information("Updated configuration fragment {Fragment}", fragment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -175,6 +181,9 @@ namespace AgentConfigurationServer.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            Log.Information("Deleted configuration fragment {Fragment}", fragment);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -233,7 +242,7 @@ namespace AgentConfigurationServer.Controllers
                     TargetId = targetId,
                     FragmentId = fragment.Id,
                     Created = DateTime.Now,
-                    CreatedBy = "test.user"
+                    CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? ""
                 });
 
                 await _context.TargetFragments.AddRangeAsync(targetFragments);

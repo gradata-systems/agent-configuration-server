@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using AgentConfigurationServer.Models;
 using Microsoft.AspNetCore.Authorization;
+using Serilog.Events;
+using Serilog;
 
 namespace AgentConfigurationServer.Controllers
 {
@@ -66,15 +68,17 @@ namespace AgentConfigurationServer.Controllers
                 DateTime now = DateTime.Now;
                 target.Created = now;
                 target.Modified = now;
-                target.CreatedBy = "test.user";
-                target.ModifiedBy = "test.user";
-
+                target.CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+                target.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+                
                 _context.Add(target);
                 await _context.SaveChangesAsync();
 
                 // Associated the newly created target with the selected fragments
                 await UpdateLinkedFragments(target);
                 await _context.SaveChangesAsync();
+
+                Log.Information("Created target {Target}", target);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -118,13 +122,15 @@ namespace AgentConfigurationServer.Controllers
             if (ModelState.IsValid)
             {
                 target.Modified = DateTime.Now;
-                target.ModifiedBy = "test.user";
+                target.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
 
                 try
                 {
                     _context.Update(target);
                     await UpdateLinkedFragments(target);
                     await _context.SaveChangesAsync();
+
+                    Log.Information("Updated target {Target}", target);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -175,6 +181,9 @@ namespace AgentConfigurationServer.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            Log.Information("Deleted target {Target}", target);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -231,8 +240,8 @@ namespace AgentConfigurationServer.Controllers
                     TargetId = target.Id,
                     FragmentId = fragmentId,
                     Created = DateTime.Now,
-                    CreatedBy = "test.user"
-                });
+                    CreatedBy = HttpContext.User.Identity?.Name ?? ""
+            });
 
                 await _context.TargetFragments.AddRangeAsync(targetFragments);
             }
