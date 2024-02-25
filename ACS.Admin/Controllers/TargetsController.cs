@@ -240,7 +240,7 @@ namespace ACS.Admin.Controllers
                     TargetId = target.Id,
                     FragmentId = fragmentId,
                     Created = DateTime.Now,
-                    CreatedBy = HttpContext.User.Identity?.Name ?? ""
+                    CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? ""
             });
 
                 await _context.TargetFragments.AddRangeAsync(targetFragments);
