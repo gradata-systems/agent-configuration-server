@@ -11,7 +11,7 @@ namespace ACS.Shared.Models
         [StringLength(32)]
         public required string FragmentId { get; set; }
 
-        public DateTimeOffset Created { get; set; }
+        public required DateTime Created { get; set; }
 
         [StringLength(256)]
         public required string CreatedBy { get; set; }

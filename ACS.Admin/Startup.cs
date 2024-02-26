@@ -1,5 +1,6 @@
 ﻿using ACS.Admin.Configuration;
 using ACS.Shared;
+using ACS.Shared.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -33,6 +34,10 @@ namespace ACS.Admin
 
             // Add services to the container.
             services.AddControllersWithViews();
+
+            // Bind app settings to make them available via dependency injection
+            services.AddOptions();
+            services.Configure<DataSourceConfiguration>(Configuration.GetSection("DataSource"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

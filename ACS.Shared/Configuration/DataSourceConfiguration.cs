@@ -16,7 +16,7 @@ namespace ACS.Shared.Configuration
 
         public string GetConnectionString()
         {
-            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder()
+            MySqlConnectionStringBuilder builder = new()
             {
                 Server = Server,
                 Port = Port,

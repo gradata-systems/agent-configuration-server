@@ -1,7 +1,7 @@
 ﻿using ACS.Shared.Configuration;
 using ACS.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace ACS.Shared
 {
@@ -11,25 +11,17 @@ namespace ACS.Shared
         public DbSet<Fragment> Fragments { get; set; }
         public DbSet<TargetFragment> TargetFragments { get; set; }
 
-        private readonly IConfiguration _configuration;
+        private readonly DataSourceConfiguration _configuration;
 
-        public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration config)
+        public AppDbContext(DbContextOptions<AppDbContext> options, IOptions<DataSourceConfiguration> config)
             : base(options)
         {
-            _configuration = config;
+            _configuration = config.Value;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            DataSourceConfiguration? config = _configuration.GetRequiredSection("DataSource").Get<DataSourceConfiguration>();
-            if (config != null)
-            {
-                optionsBuilder.UseMySQL(config.GetConnectionString());
-            }
-            else
-            {
-                throw new Exception("Data source configuration not specified");
-            }
+            optionsBuilder.UseMySQL(_configuration.GetConnectionString());
         }
     }
 }

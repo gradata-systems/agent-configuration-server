@@ -22,7 +22,7 @@ namespace ACS.Shared.Models
 
         [ValidateNever]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
-        public DateTime Created { get; set; }
+        public required DateTime Created { get; set; }
 
         [ValidateNever]
         [StringLength(256)]
@@ -30,7 +30,7 @@ namespace ACS.Shared.Models
 
         [ValidateNever]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
-        public DateTime Modified { get; set; }
+        public required DateTime Modified { get; set; }
 
         [ValidateNever]
         [StringLength(256)]

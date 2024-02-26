@@ -10,17 +10,17 @@ namespace ACS.Admin.Controllers
     [Authorize]
     public class FragmentsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _dbContext;
 
-        public FragmentsController(AppDbContext context)
+        public FragmentsController(AppDbContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
         }
 
         // GET: Fragments
         public async Task<IActionResult> Index()
         {
-            List<Fragment> fragments = await _context.Fragments.ToListAsync();
+            List<Fragment> fragments = await _dbContext.Fragments.ToListAsync();
 
             // Count the number of targets linked to each fragment
             foreach (Fragment fragment in fragments)
@@ -39,7 +39,7 @@ namespace ACS.Admin.Controllers
                 return NotFound();
             }
 
-            var fragment = await _context.Fragments
+            var fragment = await _dbContext.Fragments
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (fragment == null)
             {
@@ -72,11 +72,11 @@ namespace ACS.Admin.Controllers
                 fragment.CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
                 fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
 
-                _context.Add(fragment);
-                await _context.SaveChangesAsync();
+                _dbContext.Add(fragment);
+                await _dbContext.SaveChangesAsync();
 
                 await UpdateLinkedTargets(fragment);
-                await _context.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
                 Log.Information("Created configuration fragment {Fragment}", fragment);
 
@@ -96,7 +96,7 @@ namespace ACS.Admin.Controllers
                 return NotFound();
             }
 
-            var fragment = await _context.Fragments.FindAsync(id);
+            var fragment = await _dbContext.Fragments.FindAsync(id);
             if (fragment == null)
             {
                 return NotFound();
@@ -126,9 +126,9 @@ namespace ACS.Admin.Controllers
                     fragment.Modified = DateTime.Now;
                     fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
 
-                    _context.Update(fragment);
+                    _dbContext.Update(fragment);
                     await UpdateLinkedTargets(fragment);
-                    await _context.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
 
                     Log.Information("Updated configuration fragment {Fragment}", fragment);
                 }
@@ -159,7 +159,7 @@ namespace ACS.Admin.Controllers
                 return NotFound();
             }
 
-            var fragment = await _context.Fragments
+            var fragment = await _dbContext.Fragments
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (fragment == null)
             {
@@ -174,13 +174,13 @@ namespace ACS.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var fragment = await _context.Fragments.FindAsync(id);
+            var fragment = await _dbContext.Fragments.FindAsync(id);
             if (fragment != null)
             {
-                _context.Fragments.Remove(fragment);
+                _dbContext.Fragments.Remove(fragment);
             }
 
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             Log.Information("Deleted configuration fragment {Fragment}", fragment);
 
@@ -189,7 +189,7 @@ namespace ACS.Admin.Controllers
 
         private bool FragmentExists(string id)
         {
-            return _context.Fragments.Any(e => e.Id == id);
+            return _dbContext.Fragments.Any(e => e.Id == id);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace ACS.Admin.Controllers
         private async Task<int> GetLinkedTargetCount(Fragment fragment)
         {
             return await (
-                from tf in _context.TargetFragments
+                from tf in _dbContext.TargetFragments
                 where tf.FragmentId == fragment.Id
                 select tf.Id
             ).CountAsync();
@@ -212,12 +212,12 @@ namespace ACS.Admin.Controllers
         private async Task<IEnumerable<TargetSelection>> GetLinkedTargets(Fragment? fragment = null)
         {
             IQueryable<TargetSelection> selectedTargets =
-                from t in _context.Targets
+                from t in _dbContext.Targets
                 select new TargetSelection
                 {
                     Target = t,
                     Linked = (
-                        from tf in _context.TargetFragments
+                        from tf in _dbContext.TargetFragments
                         where fragment != null && tf.FragmentId == fragment.Id && tf.TargetId == t.Id
                         select tf.Id
                     ).Any()
@@ -231,7 +231,7 @@ namespace ACS.Admin.Controllers
         /// </summary>
         private async Task UpdateLinkedTargets(Fragment fragment)
         {
-            await _context.TargetFragments
+            await _dbContext.TargetFragments
                 .Where(f => f.FragmentId == fragment.Id)
                 .ExecuteDeleteAsync();
 
@@ -245,7 +245,7 @@ namespace ACS.Admin.Controllers
                     CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? ""
                 });
 
-                await _context.TargetFragments.AddRangeAsync(targetFragments);
+                await _dbContext.TargetFragments.AddRangeAsync(targetFragments);
             }
         }
     }

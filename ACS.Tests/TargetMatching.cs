@@ -1,0 +1,177 @@
+using ACS.Api.Models;
+using ACS.Api.Services;
+using ACS.Shared.Models;
+using Microsoft.Extensions.DependencyInjection;
+using static ACS.Api.Services.TargetMatchingService;
+
+namespace ACS.Tests
+{
+    [TestClass]
+    public class TargetMatching
+    {
+        private ITargetMatchingService _targetMatchingService;
+
+        [TestInitialize]
+        public void Init()
+        {
+            ServiceCollection services = new();
+            services.AddScoped<ITargetMatchingService, TargetMatchingService>();
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            _targetMatchingService = serviceProvider.GetRequiredService<ITargetMatchingService>();
+        }
+
+        [TestMethod]
+        public void InvalidVersion()
+        {
+            Target target = new TargetBuilder("agentName").Build();
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.x",
+                HostName = "localhost",
+                UserName = "test.user"
+            };
+
+            Assert.ThrowsException<InvalidVersionException>(() => _targetMatchingService.IsMatch(target, requestParams));
+        }
+
+        [TestMethod]
+        public void AnyMatch()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostName = "localhost",
+                UserName = "test.user"
+            };
+
+            Target target = new TargetBuilder("agentName").Build();
+
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "No criteria results in a match");
+        }
+
+        [TestMethod]
+        public void MatchesVersionInRange()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostName = "localhost",
+                UserName = "test.user"
+            };
+
+            Target target = new TargetBuilder("agentName")
+                .AgentMinVersion("1.0.0.0")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Agent version greater than min version should match");
+
+            requestParams.AgentVersion = "0.1";
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Agent version less than min version should not match");
+
+            target = new TargetBuilder("agentName")
+                .AgentMaxVersion("1.2.0.0")
+                .Build();
+            requestParams.AgentVersion = "1.1";
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Agent version less than max version should match");
+
+            requestParams.AgentVersion = "1.3";
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Agent version greater than max version should not match");
+        }
+
+        [TestMethod]
+        public void MatchesUserName()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostName = "localhost",
+                UserName = "test.user"
+            };
+
+            Target target = new TargetBuilder("agentName")
+                .UserNamePattern(@"test\..+")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Username matching the pattern should result in a match");
+
+            requestParams.UserName = "another.user";
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Username not matching the pattern should not result in a match");
+        }
+
+        [TestMethod]
+        public void MatchesHostName()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostName = "myhost.example.com",
+                UserName = "test.user"
+            };
+
+            Target target = new TargetBuilder("agentName")
+                .HostNamePattern(@"^.*\.example\.com$")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Host matching the pattern should result in a match");
+
+            requestParams.HostName = "google.com";
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Host not matching the pattern should not result in a match");
+        }
+
+        private class TargetBuilder
+        {
+            private readonly Target _target;
+
+            public TargetBuilder(string agentName) {
+                _target = new Target
+                {
+                    AgentName = agentName,
+                    Enabled = true,
+                    Created = DateTime.Now,
+                    CreatedBy = "test.user",
+                    Modified = DateTime.Now,
+                    ModifiedBy = "test.user",
+                    TargetFragments = []
+                };
+            }
+
+            public Target Build()
+            {
+                return _target;
+            }
+
+            public TargetBuilder AgentMinVersion(string version)
+            {
+                _target.AgentMinVersion = version;
+                return this;
+            }
+
+            public TargetBuilder AgentMaxVersion(string version)
+            {
+                _target.AgentMaxVersion = version;
+                return this;
+            }
+
+            public TargetBuilder UserNamePattern(string pattern)
+            {
+                _target.UserNamePattern = pattern;
+                return this;
+            }
+
+            public TargetBuilder HostNamePattern(string pattern)
+            {
+                _target.HostNamePattern = pattern;
+                return this;
+            }
+
+            public TargetBuilder Enabled(bool enabled)
+            {
+                _target.Enabled = enabled;
+                return this;
+            }
+        }
+    }
+}

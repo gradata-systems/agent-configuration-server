@@ -1,4 +1,7 @@
-﻿using ACS.Shared;
+﻿using ACS.Api.Configuration;
+using ACS.Api.Services;
+using ACS.Shared;
+using ACS.Shared.Configuration;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
@@ -20,7 +23,11 @@ namespace ACS.Admin
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContextFactory<AppDbContext>();
+
+            // Services
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ITargetMatchingService, TargetMatchingService>();
 
             ConfigureAuthentication(services);
             ConfigureAuthorisation(services);
@@ -31,6 +38,11 @@ namespace ACS.Admin
 
             // Add services to the container.
             services.AddControllersWithViews();
+
+            // Bind app settings to make them available via dependency injection
+            services.AddOptions();
+            services.Configure<DataSourceConfiguration>(Configuration.GetSection("DataSource"));
+            services.Configure<ApiConfiguration>(Configuration.GetSection(ConfigurationRoot));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
