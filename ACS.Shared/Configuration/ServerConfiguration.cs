@@ -2,22 +2,15 @@
 {
     public class ServerConfiguration
     {
-        public int Port { get; set; }
-
         public required TlsOptions Tls { get; set; }
     }
 
     public class TlsOptions
     {
         /// <summary>
-        /// PEM encrypted certificate file path
+        /// PKCS12 certificate file path
         /// </summary>
         public required string CertificatePath { get; set; }
-
-        /// <summary>
-        /// PEM private key file path
-        /// </summary>
-        public required string KeyPath { get; set; }
 
         /// <summary>
         /// Private key passphrase

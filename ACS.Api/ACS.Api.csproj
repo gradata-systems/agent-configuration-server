@@ -6,7 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aeac4e6d-6cdb-4d1f-8c87-c8c9f35271a3</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/runtime:8.0</ContainerBaseImage>
+    <ContainerRegistry>docker.intranet.gradata.com.au</ContainerRegistry>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORTS" Value="8443" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="8.0.2" />

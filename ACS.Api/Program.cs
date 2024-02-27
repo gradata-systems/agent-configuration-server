@@ -23,7 +23,8 @@ namespace ACS.Api
 
                             if (serverConfiguration != null)
                             {
-                                kestrelOptions.ListenAnyIP(serverConfiguration.Port, listenOptions =>
+                                int listenPort = int.Parse(Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORTS") ?? "8443");
+                                kestrelOptions.ListenAnyIP(listenPort, listenOptions =>
                                 {
                                     X509Certificate2 serverCert = new(serverConfiguration.Tls.CertificatePath, serverConfiguration.Tls.Password);
                                     listenOptions.UseHttps(serverCert, httpsOptions =>
