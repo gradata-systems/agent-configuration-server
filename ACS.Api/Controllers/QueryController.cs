@@ -1,10 +1,12 @@
 ﻿using ACS.Api.Models;
 using ACS.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace ACS.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class QueryController : ControllerBase

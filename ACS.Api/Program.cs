@@ -1,7 +1,9 @@
 using ACS.Admin;
 using ACS.Shared.Configuration;
 using ACS.Shared.Logging;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ACS.Api
 {
@@ -23,11 +25,11 @@ namespace ACS.Api
                             {
                                 kestrelOptions.ListenAnyIP(serverConfiguration.Port, listenOptions =>
                                 {
-                                    listenOptions.UseHttps();
-                                    /*listenOptions.UseHttps(X509Certificate2.CreateFromEncryptedPemFile(
-                                        serverConfiguration.Tls.CertificatePath,
-                                        serverConfiguration.Tls.Password,
-                                        serverConfiguration.Tls.KeyPath));*/
+                                    X509Certificate2 serverCert = new(serverConfiguration.Tls.CertificatePath, serverConfiguration.Tls.Password);
+                                    listenOptions.UseHttps(serverCert, httpsOptions =>
+                                    {
+                                        httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+                                    });
                                 });
                             }
                             else

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using System.IO.Compression;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace ACS.Admin
 {
@@ -79,21 +81,72 @@ namespace ACS.Admin
 
         private void ConfigureAuthentication(IServiceCollection services)
         {
-            string? caTrustPath = Configuration.GetRequiredSection(ConfigurationRoot)
-                .GetRequiredSection("Authentication")
-                .GetValue<string>("CaTrustPath");
+            ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
+                .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
+            
+            X509Certificate2? caTrustCert = !string.IsNullOrEmpty(authConfig.CaTrustPath) ?
+                new X509Certificate2(authConfig.CaTrustPath) : null;
+            HashSet<Regex>? subjectPatterns = authConfig.AuthorisedSubjects != null ?
+                new(authConfig.AuthorisedSubjects.Select(pattern => new Regex(pattern, RegexOptions.Compiled))) : null;
 
             services
                 .AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
                 .AddCertificate(options =>
                 {
-                    options.RevocationMode = X509RevocationMode.NoCheck;
-
-                    if (!string.IsNullOrEmpty(caTrustPath))
+                    if (caTrustCert != null)
                     {
-                        options.CustomTrustStore = new X509Certificate2Collection(X509Certificate2.CreateFromPemFile(caTrustPath));
+                        options.ChainTrustValidationMode = X509ChainTrustMode.CustomRootTrust;
+                        options.CustomTrustStore = new X509Certificate2Collection(caTrustCert);
                     }
+
+                    options.RevocationMode = X509RevocationMode.NoCheck;
+                    options.Events = new CertificateAuthenticationEvents
+                    {
+                        OnCertificateValidated = context =>
+                        {
+                            OnCertificateValidated(context, subjectPatterns);
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            if (context.HttpContext.Connection.ClientCertificate == null)
+                            {
+                                Log.Warning("No client certificate");
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
+        }
+
+        private static void OnCertificateValidated(CertificateValidatedContext context, HashSet<Regex>? subjectPatterns)
+        {
+            Claim[] claims =
+            {
+                new(ClaimTypes.NameIdentifier, context.ClientCertificate.Subject, ClaimValueTypes.String, context.Options.ClaimsIssuer),
+                new(ClaimTypes.Name, context.ClientCertificate.Subject, ClaimValueTypes.String, context.Options.ClaimsIssuer)
+            };
+
+            context.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));
+
+            // If at least one subject patterns are defined, perform a regex match against the subject name for each pattern.
+            // If a match is found, the request is authorised.
+            bool authorised = true;
+            if (subjectPatterns?.Count > 0)
+            {
+                authorised = subjectPatterns.Any(pattern => pattern.IsMatch(context.ClientCertificate.Subject));
+            }
+
+            if (!authorised)
+            {
+                Log.Warning("Failed to validate client certificate {Subject}", context.ClientCertificate.Subject);
+                context.Fail("Unauthorised");
+            }
+            else
+            {
+                context.Success();
+            }
         }
 
         /// <summary>
