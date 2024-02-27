@@ -1,6 +1,7 @@
 using ACS.Shared.Configuration;
 using ACS.Shared.Logging;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ACS.Admin
 {
@@ -22,16 +23,13 @@ namespace ACS.Admin
                             {
                                 kestrelOptions.ListenAnyIP(serverConfiguration.Port, listenOptions =>
                                 {
-                                    listenOptions.UseHttps();
-                                    /*listenOptions.UseHttps(X509Certificate2.CreateFromEncryptedPemFile(
-                                        serverConfiguration.Tls.CertificatePath,
-                                        serverConfiguration.Tls.Password,
-                                        serverConfiguration.Tls.KeyPath));*/
+                                    X509Certificate2 serverCert = new(serverConfiguration.Tls.CertificatePath, serverConfiguration.Tls.Password);
+                                    listenOptions.UseHttps(serverCert);
                                 });
                             }
                             else
                             {
-                                throw new ArgumentException($"Invalid server configuration");
+                                throw new ArgumentException($"Missing server configuration");
                             }
                         });
                 })
