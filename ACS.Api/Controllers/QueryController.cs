@@ -30,7 +30,7 @@ namespace ACS.Api.Controllers
             }
             else
             {
-                return NotFound(requestParams.AgentName);
+                return NotFound();
             }
         }
 
