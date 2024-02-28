@@ -64,6 +64,13 @@ namespace ACS.Admin
 
             app.UseRouting();
 
+            ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
+                .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
+            if (!string.IsNullOrEmpty(authConfig.ForwardedHeader))
+            {
+                app.UseCertificateForwarding();
+            }
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -88,6 +95,14 @@ namespace ACS.Admin
                 new X509Certificate2(authConfig.CaTrustPath) : null;
             HashSet<Regex>? subjectPatterns = authConfig.AuthorisedSubjects != null ?
                 new(authConfig.AuthorisedSubjects.Select(pattern => new Regex(pattern, RegexOptions.Compiled))) : null;
+
+            if (!string.IsNullOrEmpty(authConfig.ForwardedHeader))
+            {
+                services.AddCertificateForwarding(options =>
+                {
+                    options.CertificateHeader = authConfig.ForwardedHeader;
+                });
+            }
 
             services
                 .AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
