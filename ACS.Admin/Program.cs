@@ -1,5 +1,6 @@
 using ACS.Shared.Configuration;
 using ACS.Shared.Logging;
+using ACS.Shared.Utilities;
 using Serilog;
 using System.Security.Cryptography.X509Certificates;
 
@@ -9,7 +10,7 @@ namespace ACS.Admin
     {
         public static void Main(string[] args)
         {
-            Host.CreateDefaultBuilder(args)
+            IHost host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
@@ -35,8 +36,12 @@ namespace ACS.Admin
                         });
                 })
                 .UseSerilog(LoggingUtils.ConfigureLogging)
-                .Build()
-                .Run();
+                .Build();
+
+            // Apply database migrations
+            DbUtil.ApplyMigrations(host);
+            
+            host.Run();
         }
     }
 }

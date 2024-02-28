@@ -1,6 +1,7 @@
 using ACS.Admin;
 using ACS.Shared.Configuration;
 using ACS.Shared.Logging;
+using ACS.Shared.Utilities;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Serilog;
 using System.Security.Cryptography.X509Certificates;
@@ -11,7 +12,7 @@ namespace ACS.Api
     {
         public static void Main(string[] args)
         {
-            Host.CreateDefaultBuilder(args)
+            IHost host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
@@ -40,8 +41,12 @@ namespace ACS.Api
                         });
                 })
                 .UseSerilog(LoggingUtils.ConfigureLogging)
-                .Build()
-                .Run();
+                .Build();
+
+            // Apply database migrations
+            DbUtil.ApplyMigrations(host);
+
+            host.Run();
         }
     }
 }
