@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "acs-api.fullname" . }}
+  labels:
+    {{- include "acs-api.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: https
+      protocol: TCP
+      name: https
+      {{- with .Values.service.nodePort }}
+      nodePort: {{ . | int }}
+      {{- end }}
+  selector:
+    {{- include "acs-api.selectorLabels" . | nindent 4 }}

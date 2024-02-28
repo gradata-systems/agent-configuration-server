@@ -1,0 +1,156 @@
+{{- $loggingPersistenceEnabled := and .Values.logging.http.enabled .Values.logging.http.persistence }}
+{{- $logDir := "/var/log/acs" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "acs-admin.fullname" . }}
+  labels:
+    {{- include "acs-admin.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "acs-admin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "acs-admin.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "acs-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- if .Values.developmentMode }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            {{- end }}
+            - name: Admin__Server__Tls__CertificatePath
+              value: /opt/tls/keystore.p12
+            - name: Admin__Server__Tls__Password
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .Values.server.tls.passwordSecretRef | nindent 18 }}
+            {{- with .Values.authentication.openId }}
+            - name: Admin__Authentication__OpenId__AuthorityUrl
+              value: {{ .authorityUrl | quote }}
+            - name: Admin__Authentication__OpenId__ClientId
+              value: {{ .clientId | quote }}
+            - name: Admin__Authentication__OpenId__ClientSecret
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .clientSecretSecretRef | nindent 18 }}
+            {{- include "acs-admin.authScopes" $ | nindent 12 }}
+            {{- end }}
+            {{- with .Values.dataSource }}
+            - name: DataSource__Server
+              value: {{ .server | quote }}
+            - name: DataSource__Port
+              value: {{ .port | quote }}
+            - name: DataSource__User
+              value: {{ .user }}
+            - name: DataSource__Password
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .passwordSecretRef | nindent 18 }}
+            - name: DataSource__Database
+              value: {{ .databaseName }}
+            {{- end }}
+            {{- with .Values.logging.console }}
+            {{- if .enabled }}
+            - name: Logging__Console__Enabled
+              value: {{ .enabled | quote }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.logging.http }}
+            {{- if .enabled }}
+            - name: Logging__Http__Enabled
+              value: {{ .enabled | quote }}
+            - name: Logging__Http__Url
+              value: {{ .url | quote }}
+            - name: Logging__Http__MinimumLogLevel
+              value: {{ .minimumLogLevel | quote }}
+            {{- range $key, $value := .headers }}
+            - name: Logging__Http__Headers__{{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            - name: Logging__Http__PeriodSeconds
+              value: {{ .periodSeconds | quote }}
+            - name: Logging__Http__BatchLimit
+              value: {{ .batchLimit | quote }}
+            {{- if $loggingPersistenceEnabled }}
+            - name: Logging__Http__Persistence__Enabled
+              value: {{ .persistence.enabled | quote }}
+            - name: Logging__Http__Persistence__Directory
+              value: {{ $logDir | quote }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /opt/tls
+              name: certs
+              readOnly: true
+            {{- if $loggingPersistenceEnabled }}
+            - mountPath: {{ $logDir }}
+              name: logs
+            {{- end }}
+          ports:
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ include "acs-admin.fullname" . }}-tls
+        {{- if $loggingPersistenceEnabled }}
+        - name: logs
+          emptyDir: { }
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+        {{- if .Values.affinity }}
+        {{- toYaml .Values.affinity | nindent 8 }}
+        {{- else }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    {{- include "acs-admin.selectorLabels" . | nindent 20 }}
+              weight: 100
+        {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "acs-api.fullname" . }}
+  labels:
+    {{- include "acs-api.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "acs-api.fullname" . }}-tls
+  commonName: {{ .Values.publicHostname }}
+  dnsNames:
+    - {{ .Values.publicHostname }}
+  usages:
+    - server auth
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        {{- toYaml .Values.server.tls.passwordSecretRef | nindent 8 }}
+  issuerRef:
+    {{- toYaml .Values.server.tls.issuerRef | nindent 4 }}

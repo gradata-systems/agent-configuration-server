@@ -1,0 +1,87 @@
+replicaCount: 3
+
+image:
+  repository: acs-admin
+  pullPolicy: IfNotPresent
+  tag: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+securityContext: {}
+
+# Enable development mode
+developmentMode: false
+
+server:
+  tls:
+    # Secret containing the password of the server certificate private key
+    passwordSecretRef:
+      name: ""
+      key: ""
+    issuerRef:
+      name: "" # cert-issuer
+      kind: ClusterIssuer
+
+authentication:
+  openId:
+    authorityUrl: "" # https://auth.example.com/realms/acs
+    clientId: "" # acs
+    clientSecretSecretRef:
+      name: ""
+      key: ""
+    scopes:
+      - openid
+      - profile
+
+dataSource:
+  server: "" # mysql-db.example.com
+  port: 3306
+  user: "" # acs
+  passwordSecretRef:
+    name: ""
+    key: ""
+  databaseName: "" # acs
+
+logging:
+  console:
+    enabled: true
+  http:
+    enabled: false
+    url: "" # https://logs.example.com/datafeed
+    minimumLogLevel: Information # Verbose|Debug|Information|Warning|Error|Fatal
+    headers: { }
+#      stroom-feed: ACS-Production-V1.0
+    periodSeconds: 10
+    batchLimit: 1000
+    persistence:
+      enabled: true
+
+service:
+  type: ClusterIP
+  port: 443
+
+# Hostname from which the application will be accessed
+publicHostname: admin.acs.internal
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/tls-acme: "true"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 256Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
