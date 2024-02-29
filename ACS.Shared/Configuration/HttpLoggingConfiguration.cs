@@ -17,6 +17,7 @@ namespace ACS.Shared.Configuration
 
         public int? BatchLimit { get; set; }
 
+        /// <summary>
         public PersistenceConfiguration? Persistence { get; set; }
 
         public class PersistenceConfiguration

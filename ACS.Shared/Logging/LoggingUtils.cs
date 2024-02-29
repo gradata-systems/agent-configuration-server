@@ -63,7 +63,7 @@ namespace ACS.Shared.Logging
                             requestUri: httpConfig.Url,
                             restrictedToMinimumLevel: httpConfig.MinimumLogLevel ?? LogEventLevel.Information,
                             logEventsInBatchLimit: httpConfig.BatchLimit,
-                            queueLimitBytes: null,
+                            queueLimitBytes: httpConfig.InMemoryQueueLimitBytes,
                             period: httpConfig.Period
                         );
                     }
