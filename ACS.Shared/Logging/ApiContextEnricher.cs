@@ -16,6 +16,8 @@ namespace ACS.Shared.Logging
     public class ApiContextEnricher : ILogEventEnricher
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly string _hostName;
+        private readonly IPAddress[] _hostAddresses;
 
         public ApiContextEnricher()
             : this(new HttpContextAccessor())
@@ -24,6 +26,9 @@ namespace ACS.Shared.Logging
         public ApiContextEnricher(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+            _hostName = Dns.GetHostName();
+            _hostAddresses = Dns.GetHostAddresses(_hostName);
+
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
@@ -35,9 +40,8 @@ namespace ACS.Shared.Logging
 
             HttpContext httpContext = _httpContextAccessor.HttpContext;
 
-            string hostName = Dns.GetHostName();
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("ServerHostName", hostName));
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("ServerAddress", Dns.GetHostAddresses(hostName)));
+            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("ServerHostName", _hostName));
+            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("ServerAddress", _hostAddresses));
 
             // Prefer the X-Forwarded-For header. If unset, fall back to the remote IP address
             string? remoteIpAddress = httpContext.Request.Headers["X-Forwarded-For"].ToString();
