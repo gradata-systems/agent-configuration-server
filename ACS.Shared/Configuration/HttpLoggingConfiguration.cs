@@ -18,6 +18,10 @@ namespace ACS.Shared.Configuration
         public int? BatchLimit { get; set; }
 
         /// <summary>
+        /// Size of in-memory queue (where persistence is disabled)
+        /// </summary>
+        public int? InMemoryQueueLimitBytes { get; set; }
+
         public PersistenceConfiguration? Persistence { get; set; }
 
         public class PersistenceConfiguration

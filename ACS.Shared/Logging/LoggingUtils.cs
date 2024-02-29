@@ -3,7 +3,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog.Events;
 using Serilog;
 using Microsoft.Extensions.Configuration;
-using Serilog.Formatting.Json;
 
 namespace ACS.Shared.Logging
 {
@@ -21,9 +20,13 @@ namespace ACS.Shared.Logging
 
             try
             {
+                ConsoleLoggingConfiguration consoleConfig = appLoggingConfig.Console;
                 if (appLoggingConfig != null && appLoggingConfig.Console.Enabled)
                 {
-                    loggerConfiguration.WriteTo.Console(new JsonFormatter());
+                    loggerConfiguration.WriteTo.Console(
+                        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level}] {Message:lj}{NewLine}{Exception}",
+                        restrictedToMinimumLevel: consoleConfig.MinimumLogLevel ?? LogEventLevel.Information
+                    );
                 }
             }
             catch (Exception ex)
