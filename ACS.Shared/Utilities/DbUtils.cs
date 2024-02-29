@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace ACS.Shared.Utilities
 {
-    public static class DbUtil
+    public static class DbUtils
     {
         /// <summary>
         /// Apply any outstanding migrations

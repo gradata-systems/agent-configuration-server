@@ -44,7 +44,7 @@ namespace ACS.Api
                 .Build();
 
             // Apply database migrations
-            DbUtil.ApplyMigrations(host);
+            DbUtils.ApplyMigrations(host);
 
             host.Run();
         }

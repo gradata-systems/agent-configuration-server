@@ -39,7 +39,7 @@ namespace ACS.Admin
                 .Build();
 
             // Apply database migrations
-            DbUtil.ApplyMigrations(host);
+            DbUtils.ApplyMigrations(host);
             
             host.Run();
         }
