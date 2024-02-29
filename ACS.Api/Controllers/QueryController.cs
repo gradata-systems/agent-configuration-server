@@ -3,6 +3,7 @@ using ACS.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACS.Api.Controllers
 {
@@ -21,6 +22,8 @@ namespace ACS.Api.Controllers
         }
 
         [HttpPost]
+        [Consumes(Application.Json)]
+        [Produces(Application.Json)]
         public IActionResult Query([FromBody] ConfigQueryRequestParams requestParams)
         {
             // Lookup the agent name in the cache service. Populate the cache if this is the first query.
