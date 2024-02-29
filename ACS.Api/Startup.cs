@@ -39,7 +39,7 @@ namespace ACS.Admin
             services.AddResponseCompression();
 
             // Add services to the container.
-            services.AddControllersWithViews();
+            services.AddControllers();
 
             // Bind app settings to make them available via dependency injection
             services.AddOptions();
