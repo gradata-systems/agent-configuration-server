@@ -41,10 +41,10 @@ namespace ACS.Shared.Logging
         {
             try
             {
-                using var content = new StreamContent(contentStream);
+                using StreamContent content = new(contentStream);
                 content.Headers.Add("Content-Type", "application/json");
 
-                var result = await _httpClient
+                using HttpResponseMessage result = await _httpClient
                     .PostAsync(requestUri, content)
                     .ConfigureAwait(false);
 

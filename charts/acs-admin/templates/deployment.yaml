@@ -64,15 +64,17 @@ spec:
               value: {{ .databaseName }}
             {{- end }}
             {{- with .Values.logging.console }}
-            {{- if .enabled }}
             - name: Logging__Console__Enabled
               value: {{ .enabled | quote }}
+            {{- if .enabled }}
+            - name: Logging__Console__MinimumLogLevel
+              value: {{ .minimumLogLevel | quote }}
             {{- end }}
             {{- end }}
             {{- with .Values.logging.http }}
-            {{- if .enabled }}
             - name: Logging__Http__Enabled
               value: {{ .enabled | quote }}
+            {{- if .enabled }}
             - name: Logging__Http__Url
               value: {{ .url | quote }}
             - name: Logging__Http__MinimumLogLevel
@@ -85,6 +87,8 @@ spec:
               value: {{ .periodSeconds | quote }}
             - name: Logging__Http__BatchLimit
               value: {{ .batchLimit | quote }}
+            - name: Logging__Http__InMemoryQueueLimitBytes
+              value: {{ .inMemoryQueueLimitBytes | int64 | quote }}
             {{- if $loggingPersistenceEnabled }}
             - name: Logging__Http__Persistence__Enabled
               value: {{ .persistence.enabled | quote }}

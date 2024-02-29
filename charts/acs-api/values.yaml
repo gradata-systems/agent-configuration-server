@@ -49,14 +49,16 @@ dataSource:
 logging:
   console:
     enabled: true
+    minimumLogLevel: Information
   http:
     enabled: false
     url: "" # https://logs.example.com/datafeed
     minimumLogLevel: Information # Verbose|Debug|Information|Warning|Error|Fatal
     headers: { }
-    #      stroom-feed: ACS-Production-V1.0
+    #  stroom-feed: ACS-Production-V1.0
     periodSeconds: 10
     batchLimit: 1000
+    inMemoryQueueLimitBytes: 10485760
     persistence:
       enabled: true
 
