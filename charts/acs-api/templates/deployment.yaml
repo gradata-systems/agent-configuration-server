@@ -34,6 +34,10 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
             {{- end }}
+            - name: DOTNET_gcServer
+              value: '1'
+            - name: DOTNET_GCDynamicAdaptationMode
+              value: '1'
             - name: Api__CacheUpdateIntervalMilliseconds
               value: {{ .Values.cacheUpdateIntervalMilliseconds | quote }}
             - name: Api__Server__Tls__CertificatePath
