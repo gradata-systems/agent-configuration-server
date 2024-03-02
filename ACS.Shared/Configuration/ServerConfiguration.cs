@@ -8,9 +8,14 @@
     public class TlsOptions
     {
         /// <summary>
-        /// PKCS12 certificate file path
+        /// PEM certificate chain file path
         /// </summary>
         public required string CertificatePath { get; set; }
+
+        /// <summary>
+        /// Encrypted PEM key file path
+        /// </summary>
+        public required string KeyPath { get; set; }
 
         /// <summary>
         /// Private key passphrase

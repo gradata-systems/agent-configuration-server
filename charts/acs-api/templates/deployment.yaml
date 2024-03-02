@@ -37,11 +37,9 @@ spec:
             - name: Api__CacheUpdateIntervalMilliseconds
               value: {{ .Values.cacheUpdateIntervalMilliseconds | quote }}
             - name: Api__Server__Tls__CertificatePath
-              value: /opt/tls/keystore.p12
-            - name: Api__Server__Tls__Password
-              valueFrom:
-                secretKeyRef:
-                  {{- toYaml .Values.server.tls.passwordSecretRef | nindent 18 }}
+              value: /opt/tls/tls.crt
+            - name: Api__Server__Tls__KeyPath
+              value: /opt/tls/tls.key
             {{- with .Values.authentication }}
             - name: Api__Authentication__CaTrustPath
               value: /opt/tls/ca.crt

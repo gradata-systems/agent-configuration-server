@@ -138,6 +138,8 @@ namespace ACS.Admin
                     options.CacheSize = authConfig.CertificateCacheSize;
                     options.CacheEntryExpiration = TimeSpan.FromSeconds(authConfig.CertificateCacheTtlSeconds);
                 });
+
+            services.AddAuthorization();
         }
 
         private static void OnCertificateValidated(CertificateValidatedContext context, HashSet<Regex>? subjectPatterns)
