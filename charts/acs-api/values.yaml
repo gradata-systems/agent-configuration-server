@@ -33,6 +33,9 @@ authentication:
   authorisedSubjects: [ ]
 #    - ".*"
   forwardedHeader: ssl-client-cert
+  certificateCache:
+    size: 1024
+    ttlSeconds: 60
 
 # How frequently to refresh the target/fragment in-memory cache from the database
 cacheUpdateIntervalMilliseconds: 10000

@@ -132,6 +132,11 @@ namespace ACS.Admin
                             return Task.CompletedTask;
                         }
                     };
+                })
+                .AddCertificateCache(options =>
+                {
+                    options.CacheSize = authConfig.CertificateCacheSize;
+                    options.CacheEntryExpiration = TimeSpan.FromSeconds(authConfig.CertificateCacheTtlSeconds);
                 });
         }
 

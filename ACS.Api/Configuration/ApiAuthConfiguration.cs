@@ -18,5 +18,15 @@
         /// Name of the header containing the client certificate, where a reverse proxy is used.
         /// </summary>
         public string? ForwardedHeader { get; set; }
+
+        /// <summary>
+        /// Size of the client certificate cache.
+        /// </summary>
+        public int CertificateCacheSize { get; set; }
+
+        /// <summary>
+        /// Length of time that cache entries are retained for.
+        /// </summary>
+        public int CertificateCacheTtlSeconds { get; set; }
     }
 }
