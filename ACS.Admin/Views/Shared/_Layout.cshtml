@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Identity.Web
+
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8" />
@@ -27,11 +29,23 @@
                         </li>
                     </ul>
                 </div>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                <div class="account">
+                    <div class="name">
+                        <span>Signed in as: </span>
+                        <span style="font-weight: 500">@GetLoggedInUserId()</span>
+                    </div>
+                    <div class="signout">
+                        <a asp-controller="Account" asp-action="LogOut" class="btn btn-primary">Sign Out</a>
+                    </div>
+                </div>
+                }
             </div>
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
@@ -46,3 +60,10 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@{
+    string? GetLoggedInUserId()
+    {
+        return User.FindFirst("preferred_username")?.Value;
+    }
+}

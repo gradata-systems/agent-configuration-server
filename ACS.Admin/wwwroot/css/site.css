@@ -29,6 +29,15 @@ body {
     color: #000;
 }
 
+nav > .container-fluid {
+    padding-left: 20px;
+    padding-right: 10px;
+}
+
+footer {
+    padding-top: 10px;
+}
+
 /* Custom overrides */
 
 label.control-label {
@@ -66,3 +75,22 @@ a.btn.delete {
 .form-check-input, .form-check-label, .form-check-label > input {
     cursor: pointer;
 }
+
+.account {
+    color: #333;
+    
+}
+
+    .account > .name {
+        font-size: 0.9em;
+        color: #555;
+    }
+
+    .account .signout {
+        text-align: right;
+    }
+
+        .account .signout > a.btn {
+            margin: 5px 0 0 0;
+            font-size: 0.8em;
+        }

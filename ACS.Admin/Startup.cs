@@ -4,6 +4,8 @@ using ACS.Shared.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using NuGet.Packaging;
 using Serilog;
 using System.IO.Compression;
@@ -33,7 +35,9 @@ namespace ACS.Admin
             services.AddResponseCompression();
 
             // Add services to the container.
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddMicrosoftIdentityUI();
 
             // Bind app settings to make them available via dependency injection
             services.AddOptions();
