@@ -42,7 +42,7 @@ namespace ACS.Api.Controllers
         /// If true, include it in the fragment map sent to the client.
         /// </summary>
         /// <returns>Map of each fragment ID and value that match the client context</returns>
-        private Dictionary<string, string> GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams)
+        private ConfigQueryResponse GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams)
         {
             Dictionary<string, string> fragments = [];
 
@@ -68,7 +68,10 @@ namespace ACS.Api.Controllers
                 }
             }
 
-            return fragments;
+            return new ConfigQueryResponse
+            {
+                Fragments = fragments
+            };
         }
     }
 }
