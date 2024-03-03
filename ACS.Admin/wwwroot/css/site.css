@@ -25,14 +25,28 @@ body {
     color: #333;
 }
 
-.navbar-brand:hover {
-    color: #000;
+    .navbar-brand:hover {
+        color: #000;
+    }
+
+nav {
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
-nav > .container-fluid {
-    padding-left: 20px;
-    padding-right: 10px;
+    nav > .container-fluid {
+        padding-left: 25px;
+        padding-right: 15px;
+    }
+
+.navbar-nav > .nav-item {
+    padding: 0 5px;
+    transition: background-color .1s;
+    border-radius: 5px;
 }
+
+    .navbar-nav > .nav-item:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
 
 footer {
     padding-top: 10px;
@@ -62,35 +76,19 @@ a.btn.delete {
     text-wrap: nowrap;
 }
 
-.navbar-nav > .nav-item {
-    padding: 0 5px;
-    transition: background-color .1s;
-    border-radius: 5px;
-}
-
-.navbar-nav > .nav-item:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
 .form-check-input, .form-check-label, .form-check-label > input {
     cursor: pointer;
 }
 
-.account {
-    color: #333;
-    
+.account > .name {
+    font-size: 0.9em;
 }
 
-    .account > .name {
-        font-size: 0.9em;
-        color: #555;
-    }
+.account .signout {
+    text-align: right;
+}
 
-    .account .signout {
-        text-align: right;
+    .account .signout > a.btn {
+        margin: 5px 0 0 0;
+        font-size: 0.8em;
     }
-
-        .account .signout > a.btn {
-            margin: 5px 0 0 0;
-            font-size: 0.8em;
-        }
