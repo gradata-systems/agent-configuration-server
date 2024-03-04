@@ -32,12 +32,14 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
             {{- end }}
+            - name: DOTNET_gcServer
+              value: '1'
+            - name: DOTNET_GCDynamicAdaptationMode
+              value: '1'
             - name: Admin__Server__Tls__CertificatePath
-              value: /opt/tls/keystore.p12
-            - name: Admin__Server__Tls__Password
-              valueFrom:
-                secretKeyRef:
-                  {{- toYaml .Values.server.tls.passwordSecretRef | nindent 18 }}
+              value: /opt/tls/tls.crt
+            - name: Admin__Server__Tls__KeyPath
+              value: /opt/tls/tls.key
             {{- with .Values.authentication.openId }}
             - name: Admin__Authentication__OpenId__AuthorityUrl
               value: {{ .authorityUrl | quote }}
@@ -48,6 +50,10 @@ spec:
                 secretKeyRef:
                   {{- toYaml .clientSecretSecretRef | nindent 18 }}
             {{- include "acs-admin.authScopes" $ | nindent 12 }}
+            {{- if .useCustomCaCertificate }}
+            - name: Admin__Authentication__OpenId__CaTrustPath
+              value: /opt/tls/ca.crt
+            {{- end }}
             {{- end }}
             {{- with .Values.dataSource }}
             - name: DataSource__Server

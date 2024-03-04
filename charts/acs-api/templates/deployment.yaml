@@ -51,9 +51,9 @@ spec:
               value: {{ join "," .authorisedSubjects | quote }}
             - name: Api__Authentication__ForwardedHeader
               value: {{ .forwardedHeader | quote }}
-            - name: Api_Authentication__CertificateCacheSize
+            - name: Api__Authentication__CertificateCacheSize
               value: {{ .certificateCache.size | quote }}
-            - name: Api_Authentication__CertificateCacheTtlSeconds
+            - name: Api__Authentication__CertificateCacheTtlSeconds
               value: {{ .certificateCache.ttlSeconds | quote }}
             {{- end }}
             {{- with .Values.dataSource }}

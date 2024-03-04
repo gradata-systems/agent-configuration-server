@@ -38,6 +38,8 @@ authentication:
     scopes:
       - openid
       - profile
+    # If true, use the CA certificate in the server's TLS Secret
+    useCustomCaCertificate: true
 
 dataSource:
   server: "" # mysql-db.example.com

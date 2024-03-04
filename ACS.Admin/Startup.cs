@@ -4,11 +4,11 @@ using ACS.Shared.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using NuGet.Packaging;
 using Serilog;
 using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ACS.Admin
 {
@@ -98,6 +98,22 @@ namespace ACS.Admin
                         options.Scope.AddRange(config.Scopes);
                         options.SaveTokens = true;
                         options.UsePkce = true;
+
+                        // If a custom CA cert is specified, perform custom certificate validation
+                        if (!string.IsNullOrEmpty(config.CaTrustPath))
+                        {
+                            options.BackchannelHttpHandler = new HttpClientHandler()
+                            {
+                                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+                                {
+                                    using X509Certificate2 caCert = new(config.CaTrustPath);
+                                    chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                                    chain.ChainPolicy.CustomTrustStore.Add(caCert);
+
+                                    return chain.Build(cert);
+                                }
+                            };
+                        }
                     });
             }
         }

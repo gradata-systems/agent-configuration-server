@@ -11,10 +11,5 @@ spec:
     - {{ .Values.publicHostname }}
   usages:
     - server auth
-  keystores:
-    pkcs12:
-      create: true
-      passwordSecretRef:
-        {{- toYaml .Values.server.tls.passwordSecretRef | nindent 8 }}
   issuerRef:
     {{- toYaml .Values.server.tls.issuerRef | nindent 4 }}

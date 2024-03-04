@@ -18,14 +18,16 @@ namespace ACS.Admin
                         .UseKestrel((context, kestrelOptions) =>
                         {
                             IConfiguration appConfig = context.Configuration.GetRequiredSection(Startup.ConfigurationRoot);
-                            ServerConfiguration? serverConfiguration = appConfig.GetRequiredSection("Server").Get<ServerConfiguration>();
+                            ServerConfiguration? serverConfig = appConfig.GetRequiredSection("Server").Get<ServerConfiguration>();
 
-                            if (serverConfiguration != null)
+                            if (serverConfig != null)
                             {
                                 int listenPort = int.Parse(Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORTS") ?? "8443");
                                 kestrelOptions.ListenAnyIP(listenPort, listenOptions =>
                                 {
-                                    X509Certificate2 serverCert = new(serverConfiguration.Tls.CertificatePath, serverConfiguration.Tls.Password);
+                                    X509Certificate2Collection chain = TlsUtils.LoadServerCertificateFromPEM(serverConfig.Tls);
+                                    X509Certificate2 serverCert = new(chain.Export(X509ContentType.Pkcs12));
+
                                     listenOptions.UseHttps(serverCert);
                                 });
                             }
