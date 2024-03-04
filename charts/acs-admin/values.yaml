@@ -20,12 +20,8 @@ developmentMode: false
 
 server:
   tls:
-    # Secret containing the password of the server certificate private key
-    passwordSecretRef:
-      name: ""
-      key: ""
     issuerRef:
-      name: "" # cert-issuer
+      name: ""
       kind: ClusterIssuer
 
 authentication:
