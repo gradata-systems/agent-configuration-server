@@ -59,7 +59,7 @@ logging:
     batchLimit: 1000
     inMemoryQueueLimitBytes: 10485760
     persistence:
-      enabled: true
+      enabled: false
 
 service:
   type: ClusterIP
