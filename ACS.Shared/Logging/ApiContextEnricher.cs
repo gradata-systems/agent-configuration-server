@@ -27,8 +27,9 @@ namespace ACS.Shared.Logging
         {
             _httpContextAccessor = httpContextAccessor;
             _hostName = Dns.GetHostName();
-            _hostAddresses = Dns.GetHostAddresses(_hostName);
-
+            _hostAddresses = Dns.GetHostAddresses(_hostName)
+                .Where(address => address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                .ToArray();
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
@@ -47,7 +48,7 @@ namespace ACS.Shared.Logging
             string? remoteIpAddress = httpContext.Request.Headers["X-Forwarded-For"].ToString();
             if (string.IsNullOrEmpty(remoteIpAddress))
             {
-                remoteIpAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+                remoteIpAddress = httpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
             }
 
             if (remoteIpAddress != null)
