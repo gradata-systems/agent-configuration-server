@@ -103,6 +103,8 @@ namespace ACS.Admin.Controllers
             }
 
             ViewBag.FragmentSelections = await GetLinkedFragments(target);
+
+            Log.Information("Viewed target {Target}", target);
             
             return View(target);
         }

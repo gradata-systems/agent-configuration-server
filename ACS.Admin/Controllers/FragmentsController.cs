@@ -104,6 +104,8 @@ namespace ACS.Admin.Controllers
 
             ViewBag.TargetSelections = await GetLinkedTargets(fragment);
 
+            Log.Information("Viewed configuration fragment {Fragment}", fragment);
+
             return View(fragment);
         }
 
