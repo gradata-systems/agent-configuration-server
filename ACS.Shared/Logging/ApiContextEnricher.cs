@@ -89,6 +89,10 @@ namespace ACS.Shared.Logging
                     {
                         logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("UserEmail", claimsIdentity.Email));
                     }
+                    if (claimsIdentity.Roles.Count > 0)
+                    {
+                        logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("UserRoles", claimsIdentity.Roles));
+                    }
                 }
             }
         }

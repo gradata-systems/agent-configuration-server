@@ -17,30 +17,37 @@ namespace ACS.Shared.Models
 
         public string? Email { get; set; }
 
+        public List<string> Roles { get; set; }
+
         public ClaimsIdentity(ClaimsPrincipal principal)
         {
             foreach (var claim in principal.Claims)
             {
                 switch (claim.Type)
                 {
-                    case "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier":
+                    case ClaimTypes.NameIdentifier:
                         Id = claim.Value;
                         break;
-                    case "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name":
+                    case ClaimTypes.Name:
                     case "preferred_username":
                         Name = claim.Value;
                         break;
-                    case "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname":
+                    case ClaimTypes.GivenName:
                         GivenName = claim.Value;
                         break;
-                    case "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname":
+                    case ClaimTypes.Surname:
                         FamilyName = claim.Value;
                         break;
-                    case "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress":
+                    case ClaimTypes.Email:
                         Email = claim.Value;
                         break;
                 }
             }
+
+            Roles = principal.Claims
+                .Where(claim => claim.Type == ClaimTypes.Role)
+                .Select(claim => claim.Value)
+                .ToList();
         }
 
         public static ClaimsIdentity FromPrincipal(ClaimsPrincipal principal)
