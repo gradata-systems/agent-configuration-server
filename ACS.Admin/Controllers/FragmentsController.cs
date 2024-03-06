@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using ACS.Shared;
 using ACS.Shared.Models;
+using ACS.Admin.Auth;
 
 namespace ACS.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = UserRole.ReadonlyUser)]
     public class FragmentsController : Controller
     {
         private readonly AppDbContext _dbContext;
@@ -31,25 +32,8 @@ namespace ACS.Admin.Controllers
             return View(fragments);
         }
 
-        // GET: Fragments/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var fragment = await _dbContext.Fragments
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (fragment == null)
-            {
-                return NotFound();
-            }
-
-            return View(fragment);
-        }
-
         // GET: Fragments/Create
+        [Authorize(Roles = UserRole.Administrator)]
         public async Task<IActionResult> Create()
         {
             ViewBag.TargetSelections = await GetLinkedTargets();
@@ -60,6 +44,7 @@ namespace ACS.Admin.Controllers
         // POST: Fragments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
@@ -112,6 +97,7 @@ namespace ACS.Admin.Controllers
         // POST: Fragments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
@@ -154,6 +140,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments/Delete/5
+        [Authorize(Roles = UserRole.Administrator)]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -172,6 +159,7 @@ namespace ACS.Admin.Controllers
         }
 
         // POST: Fragments/Delete/5
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

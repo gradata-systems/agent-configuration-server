@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using ACS.Shared;
 using ACS.Shared.Models;
+using ACS.Admin.Auth;
 
 namespace ACS.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = UserRole.ReadonlyUser)]
     public class TargetsController : Controller
     {
         private readonly AppDbContext _dbContext;
@@ -31,24 +32,8 @@ namespace ACS.Admin.Controllers
             return View(targets);
         }
 
-        // GET: Targets/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var target = await _dbContext.Targets.FirstOrDefaultAsync(m => m.Id == id);
-            if (target == null)
-            {
-                return NotFound();
-            }
-
-            return View(target);
-        }
-
         // GET: Targets/Create
+        [Authorize(Roles = UserRole.Administrator)]
         public async Task<IActionResult> Create()
         {
             ViewBag.FragmentSelections = await GetLinkedFragments();
@@ -59,6 +44,7 @@ namespace ACS.Admin.Controllers
         // POST: Targets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,Enabled,LinkedFragmentIds")] Target target)
@@ -112,6 +98,7 @@ namespace ACS.Admin.Controllers
         // POST: Targets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
@@ -154,6 +141,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Targets/Delete/5
+        [Authorize(Roles = UserRole.Administrator)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -172,6 +160,7 @@ namespace ACS.Admin.Controllers
         }
 
         // POST: Targets/Delete/5
+        [Authorize(Roles = UserRole.Administrator)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
