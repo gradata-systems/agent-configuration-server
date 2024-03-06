@@ -39,6 +39,8 @@ namespace ACS.Admin
                 .AddControllersWithViews()
                 .AddMicrosoftIdentityUI();
 
+            services.AddRazorPages();
+
             // Bind app settings to make them available via dependency injection
             services.AddOptions();
             services.Configure<DataSourceConfiguration>(Configuration.GetSection("DataSource"));
@@ -72,6 +74,8 @@ namespace ACS.Admin
                     name: "admin",
                     pattern: "{controller=Home}/{action=Index}/{id?}"
                 );
+
+                routes.MapRazorPages();
             });
         }
 
