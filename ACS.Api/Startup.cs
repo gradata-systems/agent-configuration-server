@@ -91,11 +91,6 @@ namespace ACS.Admin
             ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
                 .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
             
-            X509Certificate2? caTrustCert = !string.IsNullOrEmpty(authConfig.CaTrustPath) ?
-                new X509Certificate2(authConfig.CaTrustPath) : null;
-            HashSet<Regex>? subjectPatterns = authConfig.AuthorisedSubjects != null ?
-                new(authConfig.AuthorisedSubjects.Select(pattern => new Regex(pattern, RegexOptions.Compiled))) : null;
-
             if (!string.IsNullOrEmpty(authConfig.ForwardedHeader))
             {
                 services.AddCertificateForwarding(options =>
@@ -108,11 +103,17 @@ namespace ACS.Admin
                 .AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
                 .AddCertificate(options =>
                 {
-                    if (caTrustCert != null)
+                    if (!string.IsNullOrEmpty(authConfig.CaTrustPath))
                     {
+                        X509Certificate2Collection caCerts = [];
+                        caCerts.ImportFromPemFile(authConfig.CaTrustPath);
+
                         options.ChainTrustValidationMode = X509ChainTrustMode.CustomRootTrust;
-                        options.CustomTrustStore = new X509Certificate2Collection(caTrustCert);
+                        options.CustomTrustStore = caCerts;
                     }
+
+                    HashSet<Regex>? subjectPatterns = authConfig.AuthorisedSubjects != null ?
+                        new(authConfig.AuthorisedSubjects.Select(pattern => new Regex(pattern, RegexOptions.Compiled))) : null;
 
                     options.RevocationMode = X509RevocationMode.NoCheck;
                     options.Events = new CertificateAuthenticationEvents
