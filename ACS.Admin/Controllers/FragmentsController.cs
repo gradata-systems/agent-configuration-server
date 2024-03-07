@@ -8,7 +8,7 @@ using ACS.Admin.Auth;
 
 namespace ACS.Admin.Controllers
 {
-    [Authorize(Roles = UserRole.ReadonlyUser)]
+    [Authorize]
     public class FragmentsController : Controller
     {
         private readonly AppDbContext _dbContext;
@@ -19,6 +19,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Index()
         {
             List<Fragment> fragments = await _dbContext.Fragments.ToListAsync();
@@ -74,6 +75,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments/Edit/5
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
