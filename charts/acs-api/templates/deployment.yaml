@@ -46,7 +46,11 @@ spec:
               value: /opt/tls/tls.key
             {{- with .Values.authentication }}
             - name: Api__Authentication__CaTrustPath
+              {{- if .caTrustChainSecretRef.name }}
+              value: /opt/auth/tls/ca.crt
+              {{- else }}
               value: /opt/tls/ca.crt
+              {{- end }}
             - name: Api__Authentication__AuthorisedSubjects
               value: {{ join "," .authorisedSubjects | quote }}
             - name: Api__Authentication__ForwardedHeader
@@ -108,6 +112,14 @@ spec:
             - mountPath: /opt/tls
               name: certs
               readOnly: true
+            {{- with .Values.authentication.caTrustChainSecretRef }}
+            {{- if .name }}
+            - mountPath: /opt/auth/tls/ca.crt
+              name: auth-tls
+              subPath: {{ .key }}
+              readOnly: true
+            {{- end }}
+            {{- end }}
             {{- if $loggingPersistenceEnabled }}
             - mountPath: {{ $logDir }}
               name: logs
@@ -140,6 +152,13 @@ spec:
         - name: certs
           secret:
             secretName: {{ include "acs-api.fullname" . }}-tls
+        {{- with .Values.authentication.caTrustChainSecretRef }}
+        {{- if .name }}
+        - name: auth-tls
+          secret:
+            secretName: {{ .name }}
+        {{- end }}
+        {{- end }}
         {{- if $loggingPersistenceEnabled }}
         - name: logs
           emptyDir: { }

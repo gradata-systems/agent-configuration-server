@@ -25,6 +25,10 @@ server:
       kind: ClusterIssuer
 
 authentication:
+  # Customise the CA trust chain. Defaults to `ca.crt` in the generated certificate Secret.
+  caTrustChainSecretRef:
+    name: secret
+    key: key
   # Regex patterns to match against the client certificate subject
   authorisedSubjects: [ ]
 #    - ".*"
