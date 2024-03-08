@@ -204,6 +204,7 @@ namespace ACS.Admin.Controllers
         {
             IQueryable<FragmentSelection> selectedFragments =
                 from f in _dbContext.Fragments
+                orderby f.Name, f.Priority descending
                 select new FragmentSelection
                 {
                     Fragment = f,
