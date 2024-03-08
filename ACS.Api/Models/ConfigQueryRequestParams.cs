@@ -12,6 +12,8 @@ namespace ACS.Api.Models
 
         public required string HostName { get; set; }
 
+        public required string EnvironmentName { get; set; }
+
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);

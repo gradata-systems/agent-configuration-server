@@ -48,7 +48,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,Enabled,LinkedFragmentIds")] Target target)
+        public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,EnvironmentNamePattern,Enabled,LinkedFragmentIds")] Target target)
         {
             if (ModelState.IsValid)
             {
@@ -103,7 +103,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,EnvironmentNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
         {
             if (id != target.Id)
             {

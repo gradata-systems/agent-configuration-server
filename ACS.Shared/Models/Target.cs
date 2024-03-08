@@ -35,6 +35,9 @@ namespace ACS.Shared.Models
         [DisplayName("Host Name Pattern")]
         public string? HostNamePattern { get; set; }
 
+        [DisplayName("Environment Name Pattern")]
+        public string? EnvironmentNamePattern { get; set; }
+
         public bool Enabled { get; set; }
 
         [ValidateNever]

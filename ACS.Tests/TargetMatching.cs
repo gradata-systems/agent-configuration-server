@@ -30,7 +30,8 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.x",
                 HostName = "localhost",
-                UserName = "test.user"
+                UserName = "test.user",
+                EnvironmentName = "development"
             };
 
             Assert.ThrowsException<InvalidVersionException>(() => _targetMatchingService.IsMatch(target, requestParams));
@@ -44,7 +45,8 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostName = "localhost",
-                UserName = "test.user"
+                UserName = "test.user",
+                EnvironmentName = "development"
             };
 
             Target target = new TargetBuilder("agentName").Build();
@@ -60,7 +62,8 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostName = "localhost",
-                UserName = "test.user"
+                UserName = "test.user",
+                EnvironmentName = "development"
             };
 
             Target target = new TargetBuilder("agentName")
@@ -89,7 +92,8 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostName = "localhost",
-                UserName = "test.user"
+                UserName = "test.user",
+                EnvironmentName = "development"
             };
 
             Target target = new TargetBuilder("agentName")
@@ -109,7 +113,8 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostName = "myhost.example.com",
-                UserName = "test.user"
+                UserName = "test.user",
+                EnvironmentName = "development"
             };
 
             Target target = new TargetBuilder("agentName")

@@ -27,13 +27,20 @@ namespace ACS.Api.Services
                 return false;
             }
 
-            // Username matches the pattern
+            // Username does not match the pattern
             if (!string.IsNullOrEmpty(target.UserNamePattern) && !Regex.IsMatch(requestParams.UserName, target.UserNamePattern))
             {
                 return false;
             }
 
+            // Hostname does not match the pattern
             if (!string.IsNullOrEmpty(target.HostNamePattern) && !Regex.IsMatch(requestParams.HostName, target.HostNamePattern))
+            {
+                return false;
+            }
+
+            // Environment name does not match the pattern
+            if (!string.IsNullOrEmpty(target.EnvironmentNamePattern) && !Regex.IsMatch(requestParams.EnvironmentName, target.EnvironmentNamePattern))
             {
                 return false;
             }
