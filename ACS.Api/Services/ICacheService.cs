@@ -11,8 +11,6 @@ namespace ACS.Api.Services
     {
         public required Target Target { get; set; }
 
-        public required string FragmentId { get; set; }
-
-        public required string FragmentValue { get; set; }
+        public required Fragment Fragment { get; set; }
     }
 }

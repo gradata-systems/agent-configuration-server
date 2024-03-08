@@ -11,17 +11,20 @@
 <div class="row">
     <form asp-action="Create">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="col-md-4">
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Enabled" checked /> @Html.DisplayNameFor(model => model.Enabled)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" autofocus />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
+        <div class="form-group form-check">
+            <label class="form-check-label" title="Whether this fragment is eligible for target selection">
+                <input class="form-check-input" asp-for="Enabled" checked /> @Html.DisplayNameFor(model => model.Enabled)
+            </label>
+        </div>
+        <div class="form-group col-md-4">
+            <label asp-for="Name" class="control-label" title="Name of the fragment, as defined in the agent configuration document. Does not have to be unique."></label>
+            <input asp-for="Name" class="form-control" autofocus />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-1">
+            <label asp-for="Priority" class="control-label" title="Tie-breaker priority where multiple fragments match a particular target. Higher priority values take precedence."></label>
+            <input asp-for="Priority" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Priority" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="Description" class="control-label"></label>

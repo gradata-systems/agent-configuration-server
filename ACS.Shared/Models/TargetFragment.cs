@@ -8,8 +8,7 @@ namespace ACS.Shared.Models
 
         public int TargetId { get; set; }
 
-        [StringLength(32)]
-        public required string FragmentId { get; set; }
+        public required int FragmentId { get; set; }
 
         public required DateTime Created { get; set; }
 

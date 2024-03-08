@@ -16,16 +16,19 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Value)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Enabled)
+                @Html.DisplayNameFor(model => model.Priority)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Created)
+                @Html.DisplayNameFor(model => model.Enabled)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Modified)
@@ -42,6 +45,9 @@
                     <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
@@ -50,10 +56,10 @@
                     </div>
                 </td>
                 <td>
-                    <input class="form-check-input" asp-for="@item.Enabled" disabled />
+                    @Html.DisplayFor(modelItem => item.Priority)
                 </td>
-                <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
-                    @Html.DisplayFor(modelItem => item.Created)
+                <td>
+                    <input class="form-check-input" asp-for="@item.Enabled" disabled />
                 </td>
                 <td class="nowrap" title="Last modified by @Html.DisplayFor(modelItem => item.ModifiedBy)">
                     @Html.DisplayFor(modelItem => item.Modified)

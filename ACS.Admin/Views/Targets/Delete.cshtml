@@ -11,17 +11,17 @@
     <h4>Target</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.AgentName)
+        </dt>
+        <dd class="col-sm-7">
+            @Html.DisplayFor(model => model.AgentName)
+        </dd>
         <dt class = "col-sm-3">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
         <dd class = "col-sm-7">
             @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.AgentName)
-        </dt>
-        <dd class = "col-sm-7">
-            @Html.DisplayFor(model => model.AgentName)
         </dd>
         <dt class = "col-sm-3">
             @Html.DisplayNameFor(model => model.AgentMinVersion)

@@ -9,9 +9,19 @@ namespace ACS.Shared.Models
     [Microsoft.EntityFrameworkCore.Index(nameof(Enabled))]
     public class Fragment
     {
-        [RegularExpression(@"^[a-zA-Z0-9\-_]+$")]
-        [StringLength(32)]
-        public required string Id { get; set; }
+        [ScaffoldColumn(false)]
+        [ValidateNever]
+        public int Id { get; set; }
+
+        [RegularExpression(@"^[a-zA-Z0-9\.\-_]+$")]
+        [StringLength(128)]
+        public required string Name { get; set; }
+
+        /// <summary>
+        /// Numeric priority that determines which fragment will be selected, where more than one targets match.
+        /// A greater priority value means higher precedence. Fragments without a priority take less precedence than those with.
+        /// </summary>
+        public int? Priority { get; set; }
 
         public string? Description { get; set; }
 

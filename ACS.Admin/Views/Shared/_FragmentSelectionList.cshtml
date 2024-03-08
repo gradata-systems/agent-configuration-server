@@ -8,7 +8,9 @@
     <thead>
         <tr>
             <th class="col-sm-1">Linked</th>
-            <th class="col-sm-2">Fragment Id</th>
+            <th class="col-sm-1">Fragment Id</th>
+            <th class="col-sm-3">Name</th>
+            <th class="col-sm-1">Priority</th>
             <th class="col-sm-5">Description</th>
         </tr>
     </thead>
@@ -22,7 +24,9 @@
                 <td>
                     <a asp-controller="Fragments" asp-action="Edit" asp-route-id="@item.Fragment.Id" target="_blank">@item.Fragment.Id</a>
                 </td>
-                <td class="col col-5">@item.Fragment.Description</td>
+                <td class="col">@item.Fragment.Name</td>
+                <td class="col">@item.Fragment.Priority</td>
+                <td class="col">@item.Fragment.Description</td>
             </tr>
         }
     </tbody>

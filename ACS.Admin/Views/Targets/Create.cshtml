@@ -16,22 +16,22 @@
                 <input class="form-check-input" asp-for="Enabled" checked /> @Html.DisplayNameFor(model => model.Enabled)
             </label>
         </div>
+        <div class="form-group col-md-2">
+            <label asp-for="AgentName" class="control-label"></label>
+            <input asp-for="AgentName" class="form-control" autofocus />
+            <span asp-validation-for="AgentName" class="text-danger"></span>
+        </div>
         <div class="form-group">
             <label asp-for="Description" class="control-label"></label>
-            <input asp-for="Description" class="form-control" autofocus />
+            <input asp-for="Description" class="form-control" />
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <div class="form-group col-md-2">
-            <label asp-for="AgentName" class="control-label"></label>
-            <input asp-for="AgentName" class="form-control" />
-            <span asp-validation-for="AgentName" class="text-danger"></span>
-        </div>
-        <div class="form-group col-md-3">
             <label asp-for="AgentMinVersion" class="control-label"></label>
             <input asp-for="AgentMinVersion" class="form-control" />
             <span asp-validation-for="AgentMinVersion" class="text-danger"></span>
         </div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
             <label asp-for="AgentMaxVersion" class="control-label"></label>
             <input asp-for="AgentMaxVersion" class="form-control" />
             <span asp-validation-for="AgentMaxVersion" class="text-danger"></span>

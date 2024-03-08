@@ -48,7 +48,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
+        public async Task<IActionResult> Create([Bind("Name,Priority,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace ACS.Admin.Controllers
 
         // GET: Fragments/Edit/5
         [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -102,7 +102,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Priority,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
         {
             if (id != fragment.Id)
             {
@@ -111,11 +111,11 @@ namespace ACS.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                fragment.Modified = DateTime.Now;
+                fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+
                 try
                 {
-                    fragment.Modified = DateTime.Now;
-                    fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
-
                     _dbContext.Update(fragment);
                     await UpdateLinkedTargets(fragment);
                     await _dbContext.SaveChangesAsync();
@@ -143,7 +143,7 @@ namespace ACS.Admin.Controllers
 
         // GET: Fragments/Delete/5
         [Authorize(Roles = UserRole.Administrator)]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -164,7 +164,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var fragment = await _dbContext.Fragments.FindAsync(id);
             if (fragment != null)
@@ -179,7 +179,7 @@ namespace ACS.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FragmentExists(string id)
+        private bool FragmentExists(int id)
         {
             return _dbContext.Fragments.Any(e => e.Id == id);
         }

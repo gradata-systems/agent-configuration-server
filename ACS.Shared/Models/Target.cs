@@ -63,7 +63,7 @@ namespace ACS.Shared.Models
         /// IDs of fragments linked to this target
         /// </summary>
         [NotMapped]
-        public List<string>? LinkedFragmentIds { get; set; }
+        public List<int>? LinkedFragmentIds { get; set; }
 
         [ScaffoldColumn(false)]
         [ValidateNever]

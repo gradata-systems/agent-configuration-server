@@ -9,6 +9,7 @@
         <tr>
             <th class="col-sm-1">Linked</th>
             <th class="col-sm-2">Target Id</th>
+            <th class="col-sm-2">Agent Name</th>
             <th class="col-sm-5">Description</th>
         </tr>
     </thead>
@@ -22,7 +23,8 @@
                 <td>
                     <a asp-controller="Targets" asp-action="Edit" asp-route-id="@item.Target.Id" target="_blank">@item.Target.Id</a>
                 </td>
-                <td class="col col-5">@item.Target.Description</td>
+                <td class="col">@item.Target.AgentName</td>
+                <td class="col">@item.Target.Description</td>
             </tr>
         }
     </tbody>

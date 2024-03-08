@@ -19,9 +19,12 @@ namespace ACS.Shared.Migrations
                 name: "Fragments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true),
                     Value = table.Column<string>(type: "longtext", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: true),
                     Enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
@@ -65,7 +68,7 @@ namespace ACS.Shared.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     TargetId = table.Column<int>(type: "int", nullable: false),
-                    FragmentId = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    FragmentId = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false)
                 },

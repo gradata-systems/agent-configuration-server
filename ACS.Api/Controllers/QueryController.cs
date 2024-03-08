@@ -29,6 +29,8 @@ namespace ACS.Api.Controllers
             // Lookup the agent name in the cache service. Populate the cache if this is the first query.
             if (_cacheService.TryGet(requestParams.AgentName, out List<CacheEntry>? entries))
             {
+                Log.Information("Querying configuration fragments using parameters {RequestParams}", requestParams);
+
                 return Ok(GetMatchingFragments(entries, requestParams));
             }
             else
@@ -48,24 +50,11 @@ namespace ACS.Api.Controllers
 
             if (entries != null)
             {
-                foreach (CacheEntry entry in entries)
-                {
-                    try
-                    {
-                        if (_targetMatchingService.IsMatch(entry.Target, requestParams))
-                        {
-                            if (!fragments.ContainsKey(entry.FragmentId))
-                            {
-                                fragments.Add(entry.FragmentId, entry.FragmentValue);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Failed to match against target {TargetId}, {RequestParams}", entry.Target.Id, requestParams);
-                        continue;
-                    }
-                }
+                // Group by fragment name, taking the first matching unique fragment (by name) by highest priority
+                fragments = entries
+                    .Where(entry => _targetMatchingService.IsMatch(entry.Target, requestParams))
+                    .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
+                    .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment.Value);
             }
 
             return new ConfigQueryResponse

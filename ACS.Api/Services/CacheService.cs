@@ -58,8 +58,7 @@ namespace ACS.Api.Services
                         select new CacheEntry
                         {
                             Target = t,
-                            FragmentId = f.Id,
-                            FragmentValue = f.Value
+                            Fragment = f
                         }
                     )
                     .GroupBy(item => item.Target.AgentName)
