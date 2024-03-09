@@ -138,8 +138,7 @@ namespace ACS.Tests
                     Created = DateTime.Now,
                     CreatedBy = "test.user",
                     Modified = DateTime.Now,
-                    ModifiedBy = "test.user",
-                    TargetFragments = []
+                    ModifiedBy = "test.user"
                 };
             }
 

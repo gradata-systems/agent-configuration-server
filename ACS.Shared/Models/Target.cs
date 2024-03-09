@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ACS.Shared.Models
 {
@@ -60,17 +61,20 @@ namespace ACS.Shared.Models
         /// Number of fragments linked to this target
         /// </summary>
         [NotMapped]
-        public int LinkedFragments { get; set; }
+        [JsonIgnore]
+        public int? LinkedFragments { get; set; }
 
         /// <summary>
         /// IDs of fragments linked to this target
         /// </summary>
         [NotMapped]
+        [JsonIgnore]
         public List<int>? LinkedFragmentIds { get; set; }
 
         [ScaffoldColumn(false)]
         [ValidateNever]
-        public required ICollection<TargetFragment> TargetFragments { get; set; }
+        [JsonIgnore]
+        public ICollection<TargetFragment>? TargetFragments { get; set; }
 
         public override string ToString()
         {
