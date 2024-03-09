@@ -26,10 +26,10 @@
             </div>
         }
     </div>
-    <table class="table">
+    <table class="table" id="dataTable">
         <thead>
             <tr>
-                <th></th>
+                <th data-dt-order="disable"></th>
                 <th>
                     @Html.DisplayNameFor(model => model.Id)
                 </th>
@@ -52,7 +52,7 @@
                     @Html.DisplayNameFor(model => model.Modified)
                 </th>
                 <th>Linked Targets</th>
-                <th></th>
+                <th data-dt-order="disable"></th>
             </tr>
         </thead>
         <tbody>
@@ -99,3 +99,9 @@
         </tbody>
     </table>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_DataTableScriptsPartial.cshtml");
+    }
+}
