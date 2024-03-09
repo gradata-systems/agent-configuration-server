@@ -5,6 +5,8 @@ using Serilog;
 using ACS.Shared;
 using ACS.Shared.Models;
 using ACS.Admin.Auth;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text.Json;
 
 namespace ACS.Admin.Controllers
 {
@@ -178,6 +180,83 @@ namespace ACS.Admin.Controllers
             Log.Information("Deleted target {Target}", target);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpGet]
+        public async Task<IActionResult> Import()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpPost, ActionName("Import")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportFromFile(IFormFile file)
+        {
+            if (file == default || file.Length == 0)
+            {
+                return BadRequest("No file provided");
+            }
+
+            string fileName = Path.GetFileName(file.FileName);
+            if (fileName == null || Path.GetExtension(fileName).ToLowerInvariant() != ".json")
+            {
+                return BadRequest("Unacceptable file extension");
+            }
+
+            try
+            {
+                // Read JSON file from form data
+                using MemoryStream memoryStream = new();
+                await file.CopyToAsync(memoryStream);
+                List<Target>? targets = JsonSerializer.Deserialize<List<Target>>(memoryStream.ToArray());
+
+                if (targets?.Count > 0)
+                {
+                    await _dbContext.Targets.AddRangeAsync(targets.Select(target =>
+                    {
+                        target.Id = default;
+                        target.Created = DateTime.Now;
+                        target.CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+                        target.Modified = DateTime.Now;
+                        target.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+
+                        return target;
+                    }));
+
+                    await _dbContext.SaveChangesAsync();
+
+                    Log
+                        .ForContext("Targets", targets)
+                        .Information("Imported {TargetCount} targets from file {FileName}", targets.Count, fileName);
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to import targets from file");
+                return BadRequest($"Invalid targets in JSON file '{fileName}': {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Export(List<int> targetIds)
+        {
+            var targets = from f in _dbContext.Targets
+                            where targetIds.Count == 0 || targetIds.Contains(f.Id)
+                            select f;
+
+            // Return the target list as a file download, containing the serialised JSON string
+            byte[] json = JsonSerializer.SerializeToUtf8Bytes(await targets.ToListAsync());
+
+            return new FileContentResult(json, Application.Json)
+            {
+                FileDownloadName = "targets.json"
+            };
         }
 
         private bool TargetExists(int id)

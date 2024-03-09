@@ -1,4 +1,11 @@
-﻿<script src="~/lib/ace-js/ace.js" asp-append-version="true"></script>
+﻿@using ACS.Admin.Auth
+@{
+    bool isAdmin = User.IsInRole(UserRole.Administrator);
+    bool isEditor = User.IsInRole(UserRole.Editor);
+    bool inputDisabled = !(isAdmin || isEditor);
+}
+
+<script src="~/lib/ace-js/ace.js" asp-append-version="true"></script>
 <script type="text/javascript">
     var editor = ace.edit("editor", {
         theme: 'ace/theme/tomorrow_night',
@@ -13,4 +20,6 @@
     editor.getSession().on('change', function () {
         textArea.value = editor.getSession().getValue();
     });
+
+    editor.setReadOnly(@(inputDisabled ? "true" : "false"));
 </script>

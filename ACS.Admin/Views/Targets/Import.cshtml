@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Import";
+}
+
+<h1>Import</h1>
+
+<h4>Target</h4>
+<hr />
+<form asp-controller="Targets" method="post" enctype="multipart/form-data">
+    <p>Use this form to import a JSON file containing one or more exported targets.</p>
+    <p>Any existing items will not be overwritten and none of the imported targets will be linked to a fragment.</p>
+
+    <br />
+    <div>
+        <input type="file" accept=".json" name="file" required />
+    </div>
+    <br />
+    <div>
+        <input type="submit" asp-action="Import" value="Import" class="btn btn-primary" />
+    </div>
+</form>

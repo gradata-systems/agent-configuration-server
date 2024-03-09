@@ -5,6 +5,8 @@ using Serilog;
 using ACS.Shared;
 using ACS.Shared.Models;
 using ACS.Admin.Auth;
+using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACS.Admin.Controllers
 {
@@ -177,6 +179,87 @@ namespace ACS.Admin.Controllers
             Log.Information("Deleted configuration fragment {Fragment}", fragment);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpGet]
+        public async Task<IActionResult> Import()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpPost, ActionName("Import")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportFromFile(IFormFile file)
+        {
+            if (file == default || file.Length == 0)
+            {
+                return BadRequest("No file provided");
+            }
+
+            string fileName = Path.GetFileName(file.FileName);
+            if (fileName == null || Path.GetExtension(fileName).ToLowerInvariant() != ".json")
+            {
+                return BadRequest("Unacceptable file extension");
+            }
+
+            try
+            {
+                // Read JSON file from form data
+                using MemoryStream memoryStream = new();
+                await file.CopyToAsync(memoryStream);
+                List<Fragment>? fragments = JsonSerializer.Deserialize<List<Fragment>>(memoryStream.ToArray());
+
+                if (fragments?.Count > 0)
+                {
+                    await _dbContext.Fragments.AddRangeAsync(fragments.Select(fragment =>
+                    {
+                        fragment.Id = default;
+                        fragment.Created = DateTime.Now;
+                        fragment.CreatedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+                        fragment.Modified = DateTime.Now;
+                        fragment.ModifiedBy = ClaimsIdentity.FromPrincipal(HttpContext.User).Name ?? "";
+
+                        return fragment;
+                    }));
+
+                    await _dbContext.SaveChangesAsync();
+
+                    Log
+                        .ForContext("Targets", fragments)
+                        .Information("Imported {FragmentCount} fragments from file {FileName}", fragments.Count, fileName);
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to import fragments from file");
+                return BadRequest($"Invalid fragments in JSON file '{fileName}': {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = UserRole.Administrator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Export(List<int> fragmentIds)
+        {
+            var fragments = await (from f in _dbContext.Fragments
+                            where fragmentIds.Count == 0 || fragmentIds.Contains(f.Id)
+                            select f).ToListAsync();
+
+            // Return the fragment list as a file download, containing the serialised JSON string
+            byte[] json = JsonSerializer.SerializeToUtf8Bytes(fragments);
+
+            Log
+                .ForContext("Fragments", fragments)
+                .Information("Exported {FragmentCount} fragments to file", fragments.Count);
+
+            return new FileContentResult(json, Application.Json)
+            {
+                FileDownloadName = "fragments.json"
+            };
         }
 
         private bool FragmentExists(int id)

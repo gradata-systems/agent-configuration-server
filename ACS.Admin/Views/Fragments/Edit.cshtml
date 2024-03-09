@@ -1,7 +1,12 @@
-﻿@model ACS.Shared.Models.Fragment
+﻿@using ACS.Admin.Auth
+@model ACS.Shared.Models.Fragment
 
 @{
     ViewData["Title"] = "Edit";
+
+    bool isAdmin = User.IsInRole(UserRole.Administrator);
+    bool isEditor = User.IsInRole(UserRole.Editor);
+    bool inputReadonly = !(isAdmin || isEditor);
 }
 
 <h1>Edit</h1>
@@ -13,7 +18,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group form-check">
             <label class="form-check-label">
-                <input class="form-check-input" asp-for="Enabled" /> @Html.DisplayNameFor(model => model.Enabled)
+                <input class="form-check-input" asp-for="Enabled" readonly="@inputReadonly" /> @Html.DisplayNameFor(model => model.Enabled)
             </label>
         </div>
         <div class="form-group col-md-1">
@@ -22,17 +27,17 @@
         </div>
         <div class="form-group col-md-4">
             <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" class="form-control" readonly="@inputReadonly" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group col-md-1">
             <label asp-for="Priority" class="control-label"></label>
-            <input asp-for="Priority" class="form-control" type="number" min="0" />
+            <input asp-for="Priority" class="form-control" type="number" min="0" readonly="@inputReadonly" />
             <span asp-validation-for="Priority" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="Description" class="control-label"></label>
-            <input asp-for="Description" class="form-control" />
+            <input asp-for="Description" class="form-control" readonly="@inputReadonly" />
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <div class="form-group">
@@ -50,9 +55,20 @@
             await Html.RenderPartialAsync("_TargetSelectionList");
         }
         <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary" />
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger delete">Delete</a>
+            @if (isAdmin || isEditor)
+            {
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">Close</a>
+            }
+            
+            @if (isAdmin || isEditor)
+            {
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger delete">Delete</a>
+            }
         </div>
     </form>
 </div>

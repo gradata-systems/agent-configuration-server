@@ -1,68 +1,93 @@
-﻿@model IEnumerable<ACS.Shared.Models.Target>
+﻿@using ACS.Admin.Auth
+@model IEnumerable<ACS.Shared.Models.Target>
 
 @{
     ViewData["Title"] = "Index";
+
+    bool isAdmin = User.IsInRole(UserRole.Administrator);
+    bool isEditor = User.IsInRole(UserRole.Editor);
 }
 
 <h1>Targets</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AgentName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Enabled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modified)
-            </th>
-            <th>Linked Fragments</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.OrderBy(item => item.Id))
+<form asp-controller="Targets" method="post">
+    <div class="row">
+        @if (isAdmin || isEditor)
         {
-            <tr>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
-                </td>
-                <td class="nowrap">
-                    @Html.DisplayFor(modelItem => item.AgentName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    <input class="form-check-input" asp-for="@item.Enabled" disabled />
-                </td>
-                <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
-                    @Html.DisplayFor(modelItem => item.Created)
-                </td>
-                <td class="nowrap" title="Last modified by @Html.DisplayFor(modelItem => item.ModifiedBy)">
-                    @Html.DisplayFor(modelItem => item.Modified)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LinkedFragments)
-                </td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+            <div class="col-auto">
+                <a asp-action="Create" class="btn btn-primary create">Create New</a>
+            </div>
         }
-    </tbody>
-</table>
+        @if (isAdmin)
+        {
+            <div class="col col-md" style="float: right">
+                <a asp-action="Import" class="btn btn-primary">Import</a>
+                <input type="submit" asp-action="Export" value="Export" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AgentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Enabled)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Created)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Modified)
+                </th>
+                <th>Linked Fragments</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderBy(item => item.Id))
+            {
+                <tr>
+                    <td>
+                        <input class="form-check-input" type="checkbox" value="@item.Id" name="targetIds" />
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
+                    </td>
+                    <td class="nowrap">
+                        @Html.DisplayFor(modelItem => item.AgentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        <input class="form-check-input" asp-for="@item.Enabled" disabled />
+                    </td>
+                    <td class="nowrap" title="Created by @Html.DisplayFor(modelItem => item.CreatedBy)">
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td class="nowrap" title="Last modified by @Html.DisplayFor(modelItem => item.ModifiedBy)">
+                        @Html.DisplayFor(modelItem => item.Modified)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LinkedFragments)
+                    </td>
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
