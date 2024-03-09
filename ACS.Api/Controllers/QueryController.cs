@@ -1,5 +1,6 @@
 ﻿using ACS.Api.Models;
 using ACS.Api.Services;
+using ACS.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -29,8 +30,6 @@ namespace ACS.Api.Controllers
             // Lookup the agent name in the cache service. Populate the cache if this is the first query.
             if (_cacheService.TryGet(requestParams.AgentName, out List<CacheEntry>? entries))
             {
-                Log.Information("Querying configuration fragments using parameters {RequestParams}", requestParams);
-
                 return Ok(GetMatchingFragments(entries, requestParams));
             }
             else
@@ -46,7 +45,7 @@ namespace ACS.Api.Controllers
         /// <returns>Map of each fragment ID and value that match the client context</returns>
         private ConfigQueryResponse GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams)
         {
-            Dictionary<string, string> fragments = [];
+            Dictionary<string, Fragment> fragments = [];
 
             if (entries != null)
             {
@@ -54,12 +53,22 @@ namespace ACS.Api.Controllers
                 fragments = entries
                     .Where(entry => _targetMatchingService.IsMatch(entry.Target, requestParams))
                     .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
-                    .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment.Value);
+                    .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment);
+
+                Log
+                    .ForContext("Fragments", fragments.Values.Select(fragment => new
+                    {
+                        fragment.Id,
+                        fragment.Name,
+                        fragment.Priority,
+                        fragment.Description
+                    }))
+                    .Information("Matched {FragmentCount} fragments for client query parameters {RequestParams}", fragments.Count, requestParams);                    
             }
 
             return new ConfigQueryResponse
             {
-                Fragments = fragments
+                Fragments = fragments.ToDictionary(fragment => fragment.Key, fragment => fragment.Value.Value)
             };
         }
     }
