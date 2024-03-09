@@ -26,7 +26,7 @@ namespace ACS.Shared.Models
 
         public string? Description { get; set; }
 
-        public required string Value { get; set; }
+        public string? Value { get; set; }
 
         [DefaultValue(true)]
         public bool Enabled { get; set; } = true;
