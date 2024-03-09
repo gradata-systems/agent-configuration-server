@@ -49,10 +49,12 @@ namespace ACS.Api.Controllers
 
             if (entries != null)
             {
-                // Group by fragment name, taking the first matching unique fragment (by name) by highest priority
+                // Group by fragment name, taking the first matching unique fragment (by name) by highest priority.
+                // Fragments with no value are excluded from the final result set.
                 fragments = entries
                     .Where(entry => _targetMatchingService.IsMatch(entry.Target, requestParams))
                     .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
+                    .Where(entry => !string.IsNullOrEmpty(entry.Fragment.Value))
                     .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment);
 
                 Log
