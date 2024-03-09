@@ -21,7 +21,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Targets
-        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Index()
         {
             List<Target> targets = await _dbContext.Targets.ToListAsync();
@@ -36,7 +36,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Targets/Create
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         public async Task<IActionResult> Create()
         {
             ViewBag.FragmentSelections = await GetLinkedFragments();
@@ -47,7 +47,7 @@ namespace ACS.Admin.Controllers
         // POST: Targets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,EnvironmentNamePattern,Enabled,LinkedFragmentIds")] Target target)
@@ -78,7 +78,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Targets/Edit/5
-        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -102,7 +102,7 @@ namespace ACS.Admin.Controllers
         // POST: Targets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,HostNamePattern,EnvironmentNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
@@ -145,7 +145,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Targets/Delete/5
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -164,7 +164,7 @@ namespace ACS.Admin.Controllers
         }
 
         // POST: Targets/Delete/5
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -246,12 +246,16 @@ namespace ACS.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Export(List<int> targetIds)
         {
-            var targets = from f in _dbContext.Targets
-                            where targetIds.Count == 0 || targetIds.Contains(f.Id)
-                            select f;
+            var targets = await (from f in _dbContext.Targets
+                                 where targetIds.Count == 0 || targetIds.Contains(f.Id)
+                                 select f).ToListAsync();
 
             // Return the target list as a file download, containing the serialised JSON string
-            byte[] json = JsonSerializer.SerializeToUtf8Bytes(await targets.ToListAsync());
+            byte[] json = JsonSerializer.SerializeToUtf8Bytes(targets);
+
+            Log
+                .ForContext("Targets", targets)
+                .Information("Exported {TargetCount} targets to file", targets.Count);
 
             return new FileContentResult(json, Application.Json)
             {

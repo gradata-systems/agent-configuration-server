@@ -21,7 +21,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments
-        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Index()
         {
             List<Fragment> fragments = await _dbContext.Fragments.ToListAsync();
@@ -36,7 +36,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments/Create
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         public async Task<IActionResult> Create()
         {
             ViewBag.TargetSelections = await GetLinkedTargets();
@@ -47,7 +47,7 @@ namespace ACS.Admin.Controllers
         // POST: Fragments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Priority,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
@@ -77,7 +77,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments/Edit/5
-        [Authorize(Roles = UserRole.Administrator + "," + UserRole.ReadonlyUser)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor + "," + UserRole.ReadonlyUser)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -101,7 +101,7 @@ namespace ACS.Admin.Controllers
         // POST: Fragments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Priority,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
@@ -144,7 +144,7 @@ namespace ACS.Admin.Controllers
         }
 
         // GET: Fragments/Delete/5
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -163,7 +163,7 @@ namespace ACS.Admin.Controllers
         }
 
         // POST: Fragments/Delete/5
-        [Authorize(Roles = UserRole.Administrator)]
+        [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -246,8 +246,8 @@ namespace ACS.Admin.Controllers
         public async Task<IActionResult> Export(List<int> fragmentIds)
         {
             var fragments = await (from f in _dbContext.Fragments
-                            where fragmentIds.Count == 0 || fragmentIds.Contains(f.Id)
-                            select f).ToListAsync();
+                                   where fragmentIds.Count == 0 || fragmentIds.Contains(f.Id)
+                                   select f).ToListAsync();
 
             // Return the fragment list as a file download, containing the serialised JSON string
             byte[] json = JsonSerializer.SerializeToUtf8Bytes(fragments);
