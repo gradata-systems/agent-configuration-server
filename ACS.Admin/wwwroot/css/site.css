@@ -54,6 +54,15 @@ footer {
 
 /* Custom overrides */
 
+td.fragment-cell {
+    word-break: break-all;
+}
+
+    td.fragment-cell > div {
+        max-height: 50px;
+        overflow: hidden;
+    }
+
 label.control-label {
     margin-top: 10px;
     margin-bottom: 5px;
@@ -65,11 +74,6 @@ input[type='submit'], a.btn.btn-primary, a.btn.btn-secondary, a.btn.btn-danger {
 
 a.btn.delete {
     float: right;
-}
-
-.fragment-cell {
-    max-height: 50px;
-    overflow: hidden;
 }
 
 .nowrap {

@@ -74,10 +74,8 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
-                    <td>
-                        <div class="fragment-cell">
-                            @Html.DisplayFor(modelItem => item.Value)
-                        </div>
+                    <td class="fragment-cell">
+                        <div>@Html.DisplayFor(modelItem => item.Value)</div>
                     </td>
                     <td>
                         <input class="form-check-input" asp-for="@item.Enabled" disabled />
