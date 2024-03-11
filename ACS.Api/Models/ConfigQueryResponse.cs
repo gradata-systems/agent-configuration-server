@@ -2,6 +2,6 @@
 {
     public class ConfigQueryResponse
     {
-        public required Dictionary<string, string> Fragments { get; set; }
+        public required Dictionary<string, string?> Fragments { get; set; }
     }
 }

@@ -70,7 +70,9 @@ namespace ACS.Api.Controllers
 
             return new ConfigQueryResponse
             {
-                Fragments = fragments.ToDictionary(fragment => fragment.Key, fragment => fragment.Value.Value)
+                Fragments = fragments.ToDictionary(
+                    fragment => fragment.Key,
+                    fragment => fragment.Value.Value)
             };
         }
     }
