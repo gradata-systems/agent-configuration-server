@@ -25,7 +25,7 @@ namespace ACS.Api.Controllers
         [HttpPost]
         [Consumes(Application.Json)]
         [Produces(Application.Json)]
-        public IActionResult Query([FromBody] ConfigQueryRequestParams requestParams)
+        public ActionResult<List<CacheEntry>> Query([FromBody] ConfigQueryRequestParams requestParams)
         {
             // Lookup the agent name in the cache service. Populate the cache if this is the first query.
             if (_cacheService.TryGet(requestParams.AgentName, out List<CacheEntry>? entries))
@@ -34,7 +34,7 @@ namespace ACS.Api.Controllers
             }
             else
             {
-                return NotFound();
+                return Ok(new List<CacheEntry>());
             }
         }
 
