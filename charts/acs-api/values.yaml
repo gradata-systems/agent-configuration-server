@@ -31,7 +31,7 @@ authentication:
     key: key
   # Regex patterns to match against the client certificate subject
   authorisedSubjects: [ ]
-#    - ".*"
+#    - CN=authorised.user
   forwardedHeader: ssl-client-cert
   certificateCache:
     size: 1024

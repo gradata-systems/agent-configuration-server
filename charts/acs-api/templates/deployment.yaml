@@ -51,8 +51,10 @@ spec:
               {{- else }}
               value: /opt/tls/ca.crt
               {{- end }}
-            - name: Api__Authentication__AuthorisedSubjects
-              value: {{ join "," .authorisedSubjects | quote }}
+            {{- range $index, $subject := .authorisedSubjects }}
+            - name: Api__Authentication__AuthorisedSubjects__{{ $index }}
+              value: {{ $subject | quote }}
+            {{- end }}
             - name: Api__Authentication__ForwardedHeader
               value: {{ .forwardedHeader | quote }}
             - name: Api__Authentication__CertificateCacheSize
