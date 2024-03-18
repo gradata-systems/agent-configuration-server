@@ -1,0 +1,56 @@
+﻿@model ACS.Api.Models.ConfigQueryResponse
+
+@{
+    ViewData["Title"] = "Fragment Results";
+}
+
+@if (Model.Fragments != null)
+{
+    <h1>Simulation Results</h1>
+    <p>@Model.Fragments.Count fragment(s) returned for the specified client parameters.</p>
+    <p>These are listed below, each with a unique identifiers and formatted value.</p>
+
+    int fragmentIndex = 0;
+    var fragments = Model.Fragments.OrderBy(fragment => fragment.Key);
+    foreach (var fragment in fragments)
+    {
+        string editorId = $"editor-{fragmentIndex}";
+        string textareaId = $"textarea-{fragmentIndex}";
+
+        <h5>@fragment.Key</h5>
+        <div id="@editorId"></div>
+        <textarea id="@textareaId" hidden>@fragment.Value</textarea>
+        <br />
+
+        fragmentIndex++;
+    }
+}
+else
+{
+    <h1>No fragments</h1>
+    <p>No configuration fragments were returned for the specified client parameters.</p>
+}
+
+<br />
+<br />
+<input type="button" value="Back" class="btn btn-primary" onclick="window.history.back()" />
+
+@section Scripts {
+    <script src="~/lib/ace-js/ace.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        for (let i = 0; i < @Model.Fragments!.Count; i++)
+        {
+            var editor = ace.edit("editor-" + i, {
+                theme: 'ace/theme/tomorrow_night',
+                mode: 'ace/mode/xml',
+                minLines: 1,
+                maxLines: 25
+            });
+
+            var textArea = document.getElementById("textarea-" + i);
+            editor.getSession().setValue(textArea.value);
+
+            editor.setReadOnly(true);
+        }
+    </script>
+}

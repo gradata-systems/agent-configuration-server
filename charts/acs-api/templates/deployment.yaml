@@ -38,8 +38,8 @@ spec:
               value: '1'
             - name: DOTNET_GCDynamicAdaptationMode
               value: '1'
-            - name: Api__CacheUpdateIntervalMilliseconds
-              value: {{ .Values.cacheUpdateIntervalMilliseconds | quote }}
+            - name: Cache__UpdateIntervalMilliseconds
+              value: {{ .Values.cache.updateIntervalMilliseconds | int64 | quote }}
             - name: Api__Server__Tls__CertificatePath
               value: /opt/tls/tls.crt
             - name: Api__Server__Tls__KeyPath

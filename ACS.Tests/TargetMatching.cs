@@ -1,8 +1,8 @@
 using ACS.Api.Models;
-using ACS.Api.Services;
 using ACS.Shared.Models;
+using ACS.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
-using static ACS.Api.Services.TargetMatchingService;
+using static ACS.Shared.Services.TargetMatchingService;
 
 namespace ACS.Tests
 {

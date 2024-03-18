@@ -1,6 +1,7 @@
 ﻿using ACS.Admin.Configuration;
 using ACS.Shared;
 using ACS.Shared.Configuration;
+using ACS.Shared.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -25,7 +26,11 @@ namespace ACS.Admin
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContextFactory<AppDbContext>();
+
+            // API services, required for simulation lookup
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ITargetMatchingService, TargetMatchingService>();
 
             ConfigureAuthentication(services);
             ConfigureAuthorisation(services);
@@ -44,6 +49,7 @@ namespace ACS.Admin
             // Bind app settings to make them available via dependency injection
             services.AddOptions();
             services.Configure<DataSourceConfiguration>(Configuration.GetSection("DataSource"));
+            services.Configure<CacheConfiguration>(Configuration.GetSection("Cache"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

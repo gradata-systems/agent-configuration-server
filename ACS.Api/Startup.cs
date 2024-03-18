@@ -1,7 +1,7 @@
 ﻿using ACS.Api.Configuration;
-using ACS.Api.Services;
 using ACS.Shared;
 using ACS.Shared.Configuration;
+using ACS.Shared.Services;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
@@ -44,6 +44,7 @@ namespace ACS.Admin
             // Bind app settings to make them available via dependency injection
             services.AddOptions();
             services.Configure<DataSourceConfiguration>(Configuration.GetSection("DataSource"));
+            services.Configure<CacheConfiguration>(Configuration.GetSection("Cache"));
             services.Configure<ApiConfiguration>(Configuration.GetSection(ConfigurationRoot));
         }
 

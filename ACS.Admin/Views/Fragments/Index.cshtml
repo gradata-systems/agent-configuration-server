@@ -2,7 +2,7 @@
 @model IEnumerable<ACS.Shared.Models.Fragment>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Fragments";
 
     bool isAdmin = User.IsInRole(UserRole.Administrator);
     bool isEditor = User.IsInRole(UserRole.Editor);

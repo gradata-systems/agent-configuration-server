@@ -1,8 +1,10 @@
 ﻿using ACS.Api.Models;
 using ACS.Shared.Models;
+using Serilog;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace ACS.Api.Services
+namespace ACS.Shared.Services
 {
     public class TargetMatchingService : ITargetMatchingService
     {
@@ -46,6 +48,45 @@ namespace ACS.Api.Services
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// For each target/fragment record, test whether it matches the specified client context data in the request params.
+        /// If true, include it in the fragment map sent to the client.
+        /// </summary>
+        /// <returns>Map of each fragment ID and value that match the client context</returns>
+        public ConfigQueryResponse GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams)
+        {
+            Dictionary<string, Fragment> fragments = [];
+
+            if (entries != null)
+            {
+                // Group by fragment name, taking the first matching unique fragment (by name) by highest priority.
+                // Fragments with no value are excluded from the final result set.
+                fragments = entries
+                    .Where(entry => IsMatch(entry.Target, requestParams))
+                    .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
+                    .Where(entry => !string.IsNullOrEmpty(entry.Fragment.Value))
+                    .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment);
+
+                Log
+                    .ForContext("RequestParams", requestParams)
+                    .ForContext("Fragments", JsonSerializer.Serialize(fragments.Values.Select(fragment => new
+                    {
+                        fragment.Id,
+                        fragment.Name,
+                        fragment.Priority,
+                        fragment.Description
+                    })))
+                    .Information("Returned {FragmentCount} fragments to client", fragments.Count);
+            }
+
+            return new ConfigQueryResponse
+            {
+                Fragments = fragments.ToDictionary(
+                    fragment => fragment.Key,
+                    fragment => fragment.Value.Value)
+            };
         }
 
         public class InvalidVersionException(string message) : Exception(message)

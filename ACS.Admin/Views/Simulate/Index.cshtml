@@ -1,0 +1,49 @@
+﻿@model ACS.Api.Models.ConfigQueryRequestParams
+
+@{
+    ViewData["Title"] = "Simulate";
+}
+
+<h1>Simulate</h1>
+
+<p>Provide the details of a client in order to determine which configuration fragments would be returned, given the currently configured target rules and fragments.</p>
+<p>This provides a means of simulating the response a particular client would receive to an API request.</p>
+
+<div class="row">
+    <form asp-action="Search">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group col-md-1">
+            <label asp-for="AgentName" class="control-label"></label>
+            <input asp-for="AgentName" class="form-control" autofocus />
+        </div>
+        <span asp-validation-for="AgentName" class="text-danger"></span>
+        <div class="form-group col-md-2">
+            <label asp-for="AgentVersion" class="control-label"></label>
+            <input asp-for="AgentVersion" class="form-control" />
+        </div>
+        <span asp-validation-for="AgentVersion" class="text-danger"></span>
+        <div class="form-group col-md-3">
+            <label asp-for="UserName" class="control-label"></label>
+            <input asp-for="UserName" class="form-control" />
+        </div>
+        <span asp-validation-for="UserName" class="text-danger"></span>
+        <div class="form-group col-md-3">
+            <label asp-for="HostName" class="control-label"></label>
+            <input asp-for="HostName" class="form-control" />
+        </div>
+        <span asp-validation-for="HostName" class="text-danger"></span>
+        <div class="form-group col-md-2">
+            <label asp-for="EnvironmentName" class="control-label"></label>
+            <input asp-for="EnvironmentName" class="form-control" />
+        </div>
+        <span asp-validation-for="EnvironmentName" class="text-danger"></span>
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

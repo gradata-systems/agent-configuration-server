@@ -38,7 +38,8 @@ authentication:
     ttlSeconds: 60
 
 # How frequently to refresh the target/fragment in-memory cache from the database
-cacheUpdateIntervalMilliseconds: 10000
+cache:
+  updateIntervalMilliseconds: 10000
 
 dataSource:
   server: "" # mysql-db.example.com
