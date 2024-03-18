@@ -4,6 +4,7 @@ using ACS.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Text.Json;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ACS.Api.Controllers
@@ -58,14 +59,15 @@ namespace ACS.Api.Controllers
                     .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment);
 
                 Log
-                    .ForContext("Fragments", fragments.Values.Select(fragment => new
+                    .ForContext("RequestParams", requestParams)
+                    .ForContext("Fragments", JsonSerializer.Serialize(fragments.Values.Select(fragment => new
                     {
                         fragment.Id,
                         fragment.Name,
                         fragment.Priority,
                         fragment.Description
-                    }))
-                    .Information("Matched {FragmentCount} fragments for client query parameters {RequestParams}", fragments.Count, requestParams);                    
+                    })))
+                    .Information("Returned {FragmentCount} fragments to client", fragments.Count);                    
             }
 
             return new ConfigQueryResponse
