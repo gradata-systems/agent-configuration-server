@@ -1,4 +1,4 @@
-﻿namespace ACS.Api.Models
+﻿namespace ACS.Shared.Models
 {
     public class ConfigQueryResponse
     {

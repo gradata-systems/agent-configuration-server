@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ACS.Api\ACS.Api.csproj" />
     <ProjectReference Include="..\ACS.Shared\ACS.Shared.csproj" />
   </ItemGroup>
 

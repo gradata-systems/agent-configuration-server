@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json;
 
-namespace ACS.Api.Models
+namespace ACS.Shared.Models
 {
     public class ConfigQueryRequestParams
     {
