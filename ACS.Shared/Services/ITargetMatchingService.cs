@@ -4,8 +4,8 @@ namespace ACS.Shared.Services
 {
     public interface ITargetMatchingService
     {
-        bool IsMatch(Target target, ConfigQueryRequestParams requestParams);
+        bool IsMatch(CompiledTarget target, ConfigQueryRequestParams requestParams);
 
-        ConfigQueryResponse GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams);
+        ConfigQueryResponse GetMatchingFragments(List<CompiledCacheEntry>? entries, ConfigQueryRequestParams requestParams);
     }
 }

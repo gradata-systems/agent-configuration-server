@@ -9,7 +9,7 @@ namespace ACS.Shared.Services
     {
         private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
         
-        private Dictionary<string, List<CacheEntry>>? _cache = null;
+        private Dictionary<string, List<CompiledCacheEntry>>? _cache = null;
         private readonly System.Timers.Timer _updateTimer;
         private readonly object _lock = new();
 
@@ -27,7 +27,7 @@ namespace ACS.Shared.Services
             _updateTimer.Elapsed += (sender, args) => UpdateCache();
         }
 
-        public bool TryGet(string agentName, out List<CacheEntry>? cacheEntries)
+        public bool TryGet(string agentName, out List<CompiledCacheEntry>? cacheEntries)
         {
             lock (_lock)
             {
@@ -43,12 +43,13 @@ namespace ACS.Shared.Services
         /// <summary>
         /// Lookup target fragments immediately, with no cache
         /// </summary>
-        public async Task<List<CacheEntry>?> GetAsync(string agentName)
+        public async Task<List<CompiledCacheEntry>?> GetAsync(string agentName)
         {
             using AppDbContext dbContext = _dbContextFactory.CreateDbContext();
-            Dictionary<string, List<CacheEntry>> entriesByAgent = await GetCacheEntries(dbContext).ToDictionaryAsync(item => item.Key, item => item.ToList());
+            Dictionary<string, List<CompiledCacheEntry>> entriesByAgent = await GetCacheEntries(dbContext)
+                .ToDictionaryAsync(item => item.Key, item => item.Select(entry => new CompiledCacheEntry(entry)).ToList());
             
-            if (entriesByAgent!.TryGetValue(agentName, out List<CacheEntry>? entries))
+            if (entriesByAgent!.TryGetValue(agentName, out List<CompiledCacheEntry>? entries))
             {
                 return entries;
             }
@@ -64,7 +65,8 @@ namespace ACS.Shared.Services
             lock (_lock)
             {
                 using AppDbContext dbContext = _dbContextFactory.CreateDbContext();
-                _cache = GetCacheEntries(dbContext).ToDictionary(item => item.Key, item => item.ToList());
+                _cache = GetCacheEntries(dbContext)
+                    .ToDictionary(item => item.Key, item => item.Select(entry => new CompiledCacheEntry(entry)).ToList());
 
                 Log.Debug("Filled target cache with {KeyCount} keys", _cache.Count);
             }

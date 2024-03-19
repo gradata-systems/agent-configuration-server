@@ -12,13 +12,19 @@ namespace ACS.Shared.Models
         public required string AgentVersion { get; set; }
 
         [DisplayName("User Name")]
-        public required string UserName { get; set; }
+        public string? UserName { get; set; }
+
+        [DisplayName("Active Users (comma separated)")]
+        public IEnumerable<string>? ActiveUsers { get; set; }
 
         [DisplayName("Host Name (FQDN)")]
-        public required string HostName { get; set; }
+        public string? HostName { get; set; }
+
+        [DisplayName("Host Roles (comma separated)")]
+        public IEnumerable<string>? HostRoles { get; set; }
 
         [DisplayName("Environment Name")]
-        public required string EnvironmentName { get; set; }
+        public string? EnvironmentName { get; set; }
 
         public override string ToString()
         {

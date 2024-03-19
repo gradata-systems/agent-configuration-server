@@ -1,8 +1,10 @@
 ﻿using ACS.Admin.Auth;
+using ACS.Admin.Models;
 using ACS.Shared.Models;
 using ACS.Shared.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace ACS.Admin.Controllers
 {
@@ -25,9 +27,13 @@ namespace ACS.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search([Bind("AgentName,AgentVersion,UserName,HostName,EnvironmentName")] ConfigQueryRequestParams requestParams)
+        public async Task<IActionResult> Search([ModelBinder(typeof(ConfigQueryRequestParamsModelBinder))] ConfigQueryRequestParams requestParams)
         {
-            List<CacheEntry>? cacheEntries = await _cacheService.GetAsync(requestParams.AgentName);
+            List<CompiledCacheEntry>? cacheEntries = await _cacheService.GetAsync(requestParams.AgentName);
+
+            Log
+                .ForContext("RequestParams", requestParams)
+                .Information("Performed target simulation");
 
             return View(_targetMatchingService.GetMatchingFragments(cacheEntries, requestParams));
         }

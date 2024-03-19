@@ -23,7 +23,7 @@ namespace ACS.Tests
         [TestMethod]
         public void InvalidVersion()
         {
-            Target target = new TargetBuilder("agentName").Build();
+            CompiledTarget target = new TargetBuilder("agentName").Build();
             ConfigQueryRequestParams requestParams = new()
             {
                 AgentName = "agentName",
@@ -48,7 +48,7 @@ namespace ACS.Tests
                 EnvironmentName = "development"
             };
 
-            Target target = new TargetBuilder("agentName").Build();
+            CompiledTarget target = new TargetBuilder("agentName").Build();
 
             Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "No criteria results in a match");
         }
@@ -65,7 +65,7 @@ namespace ACS.Tests
                 EnvironmentName = "development"
             };
 
-            Target target = new TargetBuilder("agentName")
+            CompiledTarget target = new TargetBuilder("agentName")
                 .AgentMinVersion("1.0.0.0")
                 .Build();
             Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Agent version greater than min version should match");
@@ -95,13 +95,32 @@ namespace ACS.Tests
                 EnvironmentName = "development"
             };
 
-            Target target = new TargetBuilder("agentName")
+            CompiledTarget target = new TargetBuilder("agentName")
                 .UserNamePattern(@"test\..+")
                 .Build();
             Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Username matching the pattern should result in a match");
 
             requestParams.UserName = "another.user";
             Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Username not matching the pattern should not result in a match");
+        }
+
+        [TestMethod]
+        public void MatchesActiveUser()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                ActiveUsers = ["test.user1", "test.user2"]
+            };
+
+            CompiledTarget target = new TargetBuilder("agentName")
+                .ActiveUserNamePattern(@"^test\.user.+$")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Active user matching the pattern should result in a match");
+
+            requestParams.ActiveUsers = ["other.user"];
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Active user not matching the pattern should not result in a match");
         }
 
         [TestMethod]
@@ -112,17 +131,34 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostName = "myhost.example.com",
-                UserName = "test.user",
-                EnvironmentName = "development"
             };
 
-            Target target = new TargetBuilder("agentName")
+            CompiledTarget target = new TargetBuilder("agentName")
                 .HostNamePattern(@"^.*\.example\.com$")
                 .Build();
             Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Host matching the pattern should result in a match");
 
             requestParams.HostName = "google.com";
             Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Host not matching the pattern should not result in a match");
+        }
+
+        [TestMethod]
+        public void MatchesHostRole()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostRoles = ["ADCS", "ADDS"]
+            };
+
+            CompiledTarget target = new TargetBuilder("agentName")
+                .HostRolePattern(@"^AD.+$")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Host role matching the pattern should result in a match");
+
+            requestParams.HostRoles = ["role"];
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Host role not matching the pattern should not result in a match");
         }
 
         private class TargetBuilder
@@ -141,9 +177,9 @@ namespace ACS.Tests
                 };
             }
 
-            public Target Build()
+            public CompiledTarget Build()
             {
-                return _target;
+                return new CompiledTarget(_target);
             }
 
             public TargetBuilder AgentMinVersion(string version)
@@ -164,9 +200,21 @@ namespace ACS.Tests
                 return this;
             }
 
+            public TargetBuilder ActiveUserNamePattern(string pattern)
+            {
+                _target.ActiveUserNamePattern = pattern;
+                return this;
+            }
+
             public TargetBuilder HostNamePattern(string pattern)
             {
                 _target.HostNamePattern = pattern;
+                return this;
+            }
+
+            public TargetBuilder HostRolePattern(string pattern)
+            {
+                _target.HostRolePattern = pattern;
                 return this;
             }
 

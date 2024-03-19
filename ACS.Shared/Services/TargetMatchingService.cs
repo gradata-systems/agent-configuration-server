@@ -1,13 +1,12 @@
 ﻿using ACS.Shared.Models;
 using Serilog;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace ACS.Shared.Services
 {
     public class TargetMatchingService : ITargetMatchingService
     {
-        public bool IsMatch(Target target, ConfigQueryRequestParams requestParams)
+        public bool IsMatch(CompiledTarget target, ConfigQueryRequestParams requestParams)
         {
             if (!Version.TryParse(requestParams.AgentVersion, out Version? agentVersion) || agentVersion == null)
             {
@@ -15,35 +14,60 @@ namespace ACS.Shared.Services
             }
 
             // Agent version is less than the minimum required version
-            if (target.AgentMinVersion != null && Version.TryParse(target.AgentMinVersion, out Version? agentMinVersion) && agentMinVersion != null &&
-                agentVersion < agentMinVersion)
+            if (target.AgentMinVersion != null && agentVersion < target.AgentMinVersion)
             {
                 return false;
             }
 
             // Agent version is greater than the maximum allowed version
-            if (target.AgentMaxVersion != null && Version.TryParse(target.AgentMaxVersion, out Version? agentMaxVersion) && agentMaxVersion != null &&
-                agentVersion > agentMaxVersion)
+            if (target.AgentMaxVersion != null && agentVersion > target.AgentMaxVersion)
             {
                 return false;
             }
 
             // Username does not match the pattern
-            if (!string.IsNullOrEmpty(target.UserNamePattern) && !Regex.IsMatch(requestParams.UserName, target.UserNamePattern))
+            if (target.UserName != null)
             {
-                return false;
+                if (requestParams.UserName == null || !target.UserName.IsMatch(requestParams.UserName))
+                {
+                    return false;
+                }
+            }
+
+            // None of the active users on the host match the pattern
+            if (target.ActiveUserName != null)
+            {
+                if (requestParams.ActiveUsers == null || !requestParams.ActiveUsers.Any(target.ActiveUserName.IsMatch))
+                {
+                    return false;
+                }
             }
 
             // Hostname does not match the pattern
-            if (!string.IsNullOrEmpty(target.HostNamePattern) && !Regex.IsMatch(requestParams.HostName, target.HostNamePattern))
+            if (target.HostName != null)
             {
-                return false;
+                if (requestParams.HostName == null || !target.HostName.IsMatch(requestParams.HostName))
+                {
+                    return false;
+                }
+            }
+
+            // None of the host roles match the pattern
+            if (target.HostRole != null)
+            {
+                if (requestParams.HostRoles == null || !requestParams.HostRoles.Any(target.HostRole.IsMatch))
+                {
+                    return false;
+                }
             }
 
             // Environment name does not match the pattern
-            if (!string.IsNullOrEmpty(target.EnvironmentNamePattern) && !Regex.IsMatch(requestParams.EnvironmentName, target.EnvironmentNamePattern))
+            if (target.EnvironmentName != null)
             {
-                return false;
+                if (requestParams.EnvironmentName == null || !target.EnvironmentName.IsMatch(requestParams.EnvironmentName))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -54,7 +78,7 @@ namespace ACS.Shared.Services
         /// If true, include it in the fragment map sent to the client.
         /// </summary>
         /// <returns>Map of each fragment ID and value that match the client context</returns>
-        public ConfigQueryResponse GetMatchingFragments(List<CacheEntry>? entries, ConfigQueryRequestParams requestParams)
+        public ConfigQueryResponse GetMatchingFragments(List<CompiledCacheEntry>? entries, ConfigQueryRequestParams requestParams)
         {
             Dictionary<string, Fragment> fragments = [];
 

@@ -20,12 +20,12 @@ namespace ACS.Shared.Models
         [StringLength(32)]
         public required string AgentName { get; set; }
 
-        [DisplayName("Agent Min Version")]
+        [DisplayName("Min Version")]
         [RegularExpression(@"^[\d\.]+$")]
         [StringLength(16)]
         public string? AgentMinVersion { get; set; }
 
-        [DisplayName("Agent Max Version")]
+        [DisplayName("Max Version")]
         [RegularExpression(@"^[\d\.]+$")]
         [StringLength(16)]
         public string? AgentMaxVersion { get; set; }
@@ -33,8 +33,14 @@ namespace ACS.Shared.Models
         [DisplayName("User Name Pattern")]
         public string? UserNamePattern { get; set; }
 
+        [DisplayName("Active User Name Pattern")]
+        public string? ActiveUserNamePattern { get; set; }
+
         [DisplayName("Host Name Pattern")]
         public string? HostNamePattern { get; set; }
+
+        [DisplayName("Host Role Pattern")]
+        public string? HostRolePattern { get; set; }
 
         [DisplayName("Environment Name Pattern")]
         public string? EnvironmentNamePattern { get; set; }

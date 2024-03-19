@@ -42,9 +42,19 @@
             <span asp-validation-for="UserNamePattern" class="text-danger"></span>
         </div>
         <div class="form-group col-md-4">
+            <label asp-for="ActiveUserNamePattern" class="control-label"></label>
+            <input asp-for="ActiveUserNamePattern" class="form-control" />
+            <span asp-validation-for="ActiveUserNamePattern" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
             <label asp-for="HostNamePattern" class="control-label"></label>
             <input asp-for="HostNamePattern" class="form-control" />
             <span asp-validation-for="HostNamePattern" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-4">
+            <label asp-for="HostRolePattern" class="control-label"></label>
+            <input asp-for="HostRolePattern" class="form-control" />
+            <span asp-validation-for="HostRolePattern" class="text-danger"></span>
         </div>
         <div class="form-group col-md-4">
             <label asp-for="EnvironmentNamePattern" class="control-label"></label>

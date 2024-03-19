@@ -7,7 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace ACS.Api.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class QueryController : ControllerBase
     {
@@ -23,16 +23,19 @@ namespace ACS.Api.Controllers
         [HttpPost]
         [Consumes(Application.Json)]
         [Produces(Application.Json)]
-        public ActionResult<List<CacheEntry>> Query([FromBody] ConfigQueryRequestParams requestParams)
+        public ActionResult<ConfigQueryResponse> Query([FromBody] ConfigQueryRequestParams requestParams)
         {
             // Lookup the agent name in the cache service. Populate the cache if this is the first query.
-            if (_cacheService.TryGet(requestParams.AgentName, out List<CacheEntry>? entries))
+            if (_cacheService.TryGet(requestParams.AgentName, out List<CompiledCacheEntry>? entries))
             {
                 return Ok(_targetMatchingService.GetMatchingFragments(entries, requestParams));
             }
             else
             {
-                return Ok(new List<CacheEntry>());
+                return Ok(new ConfigQueryResponse
+                {
+                    Fragments = []
+                });
             }
         }
     }
