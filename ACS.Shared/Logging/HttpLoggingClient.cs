@@ -37,7 +37,7 @@ namespace ACS.Shared.Logging
             }
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string requestUri, Stream contentStream)
+        public async Task<HttpResponseMessage> PostAsync(string requestUri, Stream contentStream, CancellationToken cancellationToken)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace ACS.Shared.Logging
                 content.Headers.Add("Content-Type", "application/json");
 
                 using HttpResponseMessage result = await _httpClient
-                    .PostAsync(requestUri, content)
+                    .PostAsync(requestUri, content, cancellationToken)
                     .ConfigureAwait(false);
 
                 return result;
