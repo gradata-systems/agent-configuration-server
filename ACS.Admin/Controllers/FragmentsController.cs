@@ -227,7 +227,7 @@ namespace ACS.Admin.Controllers
                     await _dbContext.SaveChangesAsync();
 
                     Log
-                        .ForContext("Targets", fragments)
+                        .ForContext("Fragments", fragments)
                         .Information("Imported {FragmentCount} fragments from file {FileName}", fragments.Count, fileName);
                 }
 
