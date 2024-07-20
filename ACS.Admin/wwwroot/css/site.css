@@ -72,6 +72,10 @@ input[type='submit'], a.btn.btn-primary, a.btn.btn-secondary, a.btn.btn-danger {
     margin: 20px 10px 10px 0;
 }
 
+.form-group .help-text {
+    cursor: help;
+}
+
 a.btn.delete {
     float: right;
 }
@@ -96,3 +100,10 @@ a.btn.delete {
         margin: 5px 0 0 0;
         font-size: 0.8em;
     }
+
+/* Tooltip */
+
+.tooltip .tooltip-inner {
+    max-width: 400px;
+    text-align: left;
+}

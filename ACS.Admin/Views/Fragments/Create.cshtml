@@ -12,7 +12,7 @@
     <form asp-action="Create">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group form-check">
-            <label class="form-check-label" title="Whether this fragment is eligible for target selection">
+            <label class="form-check-label">
                 <input class="form-check-input" asp-for="Enabled" checked /> @Html.DisplayNameFor(model => model.Enabled)
             </label>
         </div>
@@ -52,5 +52,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         await Html.RenderPartialAsync("_TextEditorScriptsPartial");
+        await Html.RenderPartialAsync("_TooltipScriptsPartial");
     }
 }
