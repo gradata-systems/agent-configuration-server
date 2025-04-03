@@ -11,7 +11,7 @@
     <p>These are listed below, each with its unique identifier and value.</p>
 
     int fragmentIndex = 0;
-    var fragments = Model.Fragments.OrderBy(fragment => fragment.Key);
+    var fragments = Model.Fragments;
     foreach (var fragment in fragments)
     {
         string editorId = $"editor-{fragmentIndex}";

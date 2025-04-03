@@ -86,10 +86,13 @@ namespace ACS.Shared.Services
             {
                 // Group by fragment name, taking the first matching unique fragment (by name) by highest priority.
                 // Fragments with no value are excluded from the final result set.
+                // Finally, order by the fragment priority.
                 fragments = entries
                     .Where(entry => IsMatch(entry.Target, requestParams))
                     .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
                     .Where(entry => !string.IsNullOrEmpty(entry.Fragment.Value))
+                    .OrderByDescending(entry => entry.Fragment.Priority)
+                    .ThenBy(entry => entry.Fragment.Name)
                     .ToDictionary(entry => entry.Fragment.Name, entry => entry.Fragment);
 
                 Log
