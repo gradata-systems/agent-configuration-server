@@ -116,7 +116,7 @@ namespace ACS.Admin
                             {
                                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
                                 {
-                                    using X509Certificate2 caCert = new(config.CaTrustPath);
+                                    using X509Certificate2 caCert = X509CertificateLoader.LoadCertificateFromFile(config.CaTrustPath);
                                     chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
                                     chain.ChainPolicy.CustomTrustStore.Add(caCert);
 

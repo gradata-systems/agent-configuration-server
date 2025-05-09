@@ -26,7 +26,7 @@ namespace ACS.Admin
                                 kestrelOptions.ListenAnyIP(listenPort, listenOptions =>
                                 {
                                     X509Certificate2Collection chain = TlsUtils.LoadServerCertificateFromPEM(serverConfig.Tls);
-                                    X509Certificate2 serverCert = new(chain.Export(X509ContentType.Pkcs12));
+                                    X509Certificate2 serverCert = X509CertificateLoader.LoadPkcs12(chain.Export(X509ContentType.Pkcs12), null);
 
                                     listenOptions.UseHttps(serverCert);
                                 });

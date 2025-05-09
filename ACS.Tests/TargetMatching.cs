@@ -8,7 +8,9 @@ namespace ACS.Tests
     [TestClass]
     public class TargetMatching
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         private ITargetMatchingService _targetMatchingService;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
         [TestInitialize]
         public void Init()
