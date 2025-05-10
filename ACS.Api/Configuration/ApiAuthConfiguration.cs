@@ -9,6 +9,12 @@
         public required string CaTrustPath { get; set; }
 
         /// <summary>
+        /// Check whether certificates have expired.
+        /// If not specified, expired certificates are rejected.
+        /// </summary>
+        public bool? ValidateCertificateExpiry { get; set; }
+
+        /// <summary>
         /// Regex patterns used to match client certificate subject names.
         /// If none specified, any valid client certificate is allowed.
         /// </summary>

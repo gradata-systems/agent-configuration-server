@@ -117,6 +117,13 @@ namespace ACS.Admin
                         new(authConfig.AuthorisedSubjects.Select(pattern => new Regex(pattern, RegexOptions.Compiled))) : null;
 
                     options.RevocationMode = X509RevocationMode.NoCheck;
+
+                    // Disable expiry checking if configured
+                    if (authConfig.ValidateCertificateExpiry == false)
+                    {
+                        options.ValidateValidityPeriod = false;
+                    }
+
                     options.Events = new CertificateAuthenticationEvents
                     {
                         OnCertificateValidated = context =>
