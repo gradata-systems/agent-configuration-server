@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
-namespace ACS.Admin
+namespace ACS.Api
 {
     public class Startup
     {
@@ -36,7 +36,10 @@ namespace ACS.Admin
 
             // Response compression
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
-            services.AddResponseCompression();
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
 
             // Add services to the container.
             services.AddControllers();
@@ -50,6 +53,9 @@ namespace ACS.Admin
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
+                .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,8 +71,6 @@ namespace ACS.Admin
 
             app.UseRouting();
 
-            ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
-                .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
             if (!string.IsNullOrEmpty(authConfig.ForwardedHeader))
             {
                 app.UseCertificateForwarding();
@@ -91,7 +95,7 @@ namespace ACS.Admin
         {
             ApiAuthConfiguration authConfig = Configuration.GetRequiredSection(ConfigurationRoot)
                 .GetRequiredSection("Authentication").Get<ApiAuthConfiguration>()!;
-            
+
             if (!string.IsNullOrEmpty(authConfig.ForwardedHeader))
             {
                 services.AddCertificateForwarding(options =>

@@ -4,11 +4,9 @@ using ACS.Shared.Configuration;
 using ACS.Shared.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web.UI;
 using NuGet.Packaging;
 using Serilog;
-using System.IO.Compression;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ACS.Admin
@@ -34,11 +32,7 @@ namespace ACS.Admin
 
             ConfigureAuthentication(services);
             ConfigureAuthorisation(services);
-
-            // Response compression
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
-            services.AddResponseCompression();
-
+            
             // Add services to the container.
             services
                 .AddControllersWithViews()
@@ -70,9 +64,6 @@ namespace ACS.Admin
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // Enable gzip response compression
-            app.UseResponseCompression();
 
             app.UseEndpoints(routes =>
             {
