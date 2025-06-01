@@ -20,6 +20,9 @@ namespace ACS.Shared.Models
         [StringLength(128)]
         public required string Name { get; set; }
 
+        [HelpText("Optional query context of this fragment. Only fragments matching a query's context will be included in results.")]
+        public string? Context { get; set; }
+
         /// <summary>
         /// Numeric priority that determines which fragment will be selected, where more than one targets match.
         /// A greater priority value means higher precedence. Fragments without a priority take less precedence than those with.

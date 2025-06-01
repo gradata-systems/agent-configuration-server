@@ -88,7 +88,10 @@ namespace ACS.Shared.Services
                 // Fragments with no value are excluded from the final result set.
                 // Finally, order by the fragment priority.
                 fragments = entries
-                    .Where(entry => IsMatch(entry.Target, requestParams))
+                    .Where(entry =>
+                        IsMatch(entry.Target, requestParams) &&
+                        (entry.Fragment.Context == requestParams.Context || string.IsNullOrEmpty(entry.Fragment.Context) && string.IsNullOrEmpty(requestParams.Context))
+                    )
                     .GroupBy(entry => entry.Fragment.Name, entry => entry, (fragmentName, entries) => entries.OrderByDescending(entry => entry.Fragment.Priority).First())
                     .Where(entry => !string.IsNullOrEmpty(entry.Fragment.Value))
                     .OrderByDescending(entry => entry.Fragment.Priority)

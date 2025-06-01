@@ -50,7 +50,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Priority,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
+        public async Task<IActionResult> Create([Bind("Name,Context,Priority,Description,Value,Enabled,LinkedTargetIds")] Fragment fragment)
         {
             if (ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Priority,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Context,Priority,Description,Value,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedTargetIds")] Fragment fragment)
         {
             if (id != fragment.Id)
             {
