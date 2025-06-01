@@ -152,6 +152,7 @@ namespace ACS.Tests
                 AgentName = "agentName",
                 AgentVersion = "1.0.1",
                 HostIpv4Addresses = [
+                    "192.168.1.10",
                     "10.0.10.5"
                 ]
             };
