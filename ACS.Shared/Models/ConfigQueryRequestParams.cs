@@ -14,6 +14,10 @@ namespace ACS.Shared.Models
         [HelpText("Version of the deployed agent.")]
         public required string AgentVersion { get; set; }
 
+        [DisplayName("Context")]
+        [HelpText("Include fragments in this context.")]
+        public string? Context { get; set; }
+
         [DisplayName("User Name")]
         [HelpText("User account the agent is running under.")]
         public string? UserName { get; set; }

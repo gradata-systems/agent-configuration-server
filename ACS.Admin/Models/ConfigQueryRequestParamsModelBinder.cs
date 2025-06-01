@@ -23,6 +23,7 @@ namespace ACS.Admin.Models
             {
                 AgentName = agentName,
                 AgentVersion = agentVersion,
+                Context = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.Context)).FirstValue,
                 UserName = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.UserName)).FirstValue,
                 ActiveUsers = activeUsers?.Split(",", StringSplitOptions.TrimEntries),
                 HostName = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.HostName)).FirstValue,

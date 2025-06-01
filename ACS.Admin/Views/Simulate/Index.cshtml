@@ -28,6 +28,11 @@
         </div>
         <span asp-validation-for="UserName" class="text-danger"></span>
         <div class="form-group col-md-3">
+            <label asp-for="Context" class="control-label"></label>
+            <input asp-for="Context" class="form-control" />
+        </div>
+        <span asp-validation-for="Context" class="text-danger"></span>
+        <div class="form-group col-md-3">
             <label asp-for="ActiveUsers" class="control-label"></label>
             <input asp-for="ActiveUsers" class="form-control" />
         </div>

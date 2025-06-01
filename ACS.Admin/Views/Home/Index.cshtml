@@ -2,25 +2,27 @@
     ViewData["Title"] = "Home";
 }
 
-<h1>ACS Admin Portal</h1>
+<div class="container">
+    <h1>ACS Admin Portal</h1>
 
-<p>Welcome to the Agent Configuration Server (ACS) administration portal.</p>
-<p>This interface enables authorised users to manage the configuration policies applied to agents within the environment.</p>
+    <p>Welcome to the Agent Configuration Server (ACS) administration portal.</p>
+    <p>This interface enables authorised users to manage the configuration policies applied to agents within the environment.</p>
 
-<h2>Concepts</h2>
+    <h2>Concepts</h2>
 
-<h4>Configuration fragments</h4>
-<p>These consist of either simple values or XML configuration fragments, which are injected into agent configuration documents at runtime.</p>
-<p>Each fragment is uniquely identified, for insertion by the relevant agent, into the appropriate location in the configuration document.</p>
-<p>Fragments are eached linked to one or more <em>targets</em>.</p>
+    <h4>Configuration fragments</h4>
+    <p>These consist of either simple values or XML configuration fragments, which are injected into agent configuration documents at runtime.</p>
+    <p>Each fragment is uniquely identified, for insertion by the relevant agent, into the appropriate location in the configuration document.</p>
+    <p>Fragments are eached linked to one or more <em>targets</em>.</p>
 
-<h4>Targets</h4>
-<p>Agents send host attributes to the Agent Configuration Server as a request payload when performing a configuration request. These include:</p>
-<ul>
-    <li>Agent name</li>
-    <li>Agent version</li>
-    <li>Host and domain name</li>
-    <li>User name</li>
-</ul>
-<p>Targets are rules that determine which fragments to apply to a given agent at runtime, based on the host attributes sent by the agent.</p>
-<p>When a target matches, any configuration fragments linked to that target are provided to the requesting agent for integration into its configuration.</p>
+    <h4>Targets</h4>
+    <p>Agents send host attributes to the Agent Configuration Server as a request payload when performing a configuration request. These include:</p>
+    <ul>
+        <li>Agent name</li>
+        <li>Agent version</li>
+        <li>Host and domain name</li>
+        <li>User name</li>
+    </ul>
+    <p>Targets are rules that determine which fragments to apply to a given agent at runtime, based on the host attributes sent by the agent.</p>
+    <p>When a target matches, any configuration fragments linked to that target are provided to the requesting agent for integration into its configuration.</p>
+</div>

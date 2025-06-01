@@ -29,30 +29,33 @@
     <table class="table" id="dataTable">
         <thead>
             <tr>
-                <th data-dt-order="disable"></th>
+                <th data-priority="1" data-dt-order="disable"></th>
                 <th>
                     @Html.DisplayNameFor(model => model.Id)
                 </th>
-                <th>
+                <th data-priority="1">
                     @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Context)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Priority)
                 </th>
-                <th>
+                <th data-priority="1">
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                <th>
+                <th data-priority="2">
                     @Html.DisplayNameFor(model => model.Value)
                 </th>
-                <th>
+                <th data-priority="1">
                     @Html.DisplayNameFor(model => model.Enabled)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Modified)
                 </th>
-                <th>Linked Targets</th>
-                <th data-dt-order="disable"></th>
+                <th data-priority="1">Linked Targets</th>
+                <th data-priority="1" data-dt-order="disable"></th>
             </tr>
         </thead>
         <tbody>
@@ -67,6 +70,9 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Context)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Priority)
