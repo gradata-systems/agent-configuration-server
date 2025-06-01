@@ -43,6 +43,11 @@
         </div>
         <span asp-validation-for="HostName" class="text-danger"></span>
         <div class="form-group col-md-3">
+            <label asp-for="HostIpv4Addresses" class="control-label"></label>
+            <input asp-for="HostIpv4Addresses" class="form-control" />
+        </div>
+        <span asp-validation-for="HostIpv4Addresses" class="text-danger"></span>
+        <div class="form-group col-md-3">
             <label asp-for="HostRoles" class="control-label"></label>
             <input asp-for="HostRoles" class="form-control" />
         </div>

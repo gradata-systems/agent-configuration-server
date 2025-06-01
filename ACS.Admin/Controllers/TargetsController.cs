@@ -50,7 +50,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,ActiveUserNamePattern,HostNamePattern,HostRolePattern,EnvironmentNamePattern,Enabled,LinkedFragmentIds")] Target target)
+        public async Task<IActionResult> Create([Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,ActiveUserNamePattern,HostNamePattern,HostIpv4Cidr,HostRolePattern,EnvironmentNamePattern,Enabled,LinkedFragmentIds")] Target target)
         {
             if (ModelState.IsValid)
             {
@@ -105,7 +105,7 @@ namespace ACS.Admin.Controllers
         [Authorize(Roles = UserRole.Administrator + "," + UserRole.Editor)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,ActiveUserNamePattern,HostNamePattern,HostRolePattern,EnvironmentNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,AgentName,AgentMinVersion,AgentMaxVersion,UserNamePattern,ActiveUserNamePattern,HostNamePattern,HostIpv4Cidr,HostRolePattern,EnvironmentNamePattern,Enabled,Created,CreatedBy,Modified,ModifiedBy,LinkedFragmentIds")] Target target)
         {
             if (id != target.Id)
             {

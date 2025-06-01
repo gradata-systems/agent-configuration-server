@@ -145,6 +145,27 @@ namespace ACS.Tests
         }
 
         [TestMethod]
+        public void MatchesHostIpv4Address()
+        {
+            ConfigQueryRequestParams requestParams = new()
+            {
+                AgentName = "agentName",
+                AgentVersion = "1.0.1",
+                HostIpv4Addresses = [
+                    "10.0.10.5"
+                ]
+            };
+
+            CompiledTarget target = new TargetBuilder("agentName")
+                .HostIpv4Cidr("10.0.10.0/24")
+                .Build();
+            Assert.IsTrue(_targetMatchingService.IsMatch(target, requestParams), "Host with an IP in range should result in a match");
+
+            requestParams.HostIpv4Addresses = ["192.168.1.1"];
+            Assert.IsFalse(_targetMatchingService.IsMatch(target, requestParams), "Host with an IP out of range should not result in a match");
+        }
+
+        [TestMethod]
         public void MatchesHostRole()
         {
             ConfigQueryRequestParams requestParams = new()
@@ -211,6 +232,12 @@ namespace ACS.Tests
             public TargetBuilder HostNamePattern(string pattern)
             {
                 _target.HostNamePattern = pattern;
+                return this;
+            }
+
+            public TargetBuilder HostIpv4Cidr(string ipv4Addresses)
+            {
+                _target.HostIpv4Cidr = ipv4Addresses;
                 return this;
             }
 

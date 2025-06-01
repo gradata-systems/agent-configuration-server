@@ -46,6 +46,11 @@ namespace ACS.Shared.Models
         [HelpText("Regular expression to match against the lower-case host name of the local machine.")]
         public string? HostNamePattern { get; set; }
 
+        [DisplayName("Host IPv4 CIDR")]
+        [HelpText("Common Internet Domain Range (CIDR) to match against the host's IPv4 addresses. Example: 10.1.0.0/16.")]
+        [RegularExpression(@"^(?:(?:\d|[01]?\d\d|2[0-4]\d|25[0-5])\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d|\d)(?:\/\d{1,2})$")]
+        public string? HostIpv4Cidr { get; set; }
+
         [DisplayName("Host Role Pattern")]
         [HelpText("Regular expression to match against each of the installed Windows server roles (case sensitive).")]
         public string? HostRolePattern { get; set; }

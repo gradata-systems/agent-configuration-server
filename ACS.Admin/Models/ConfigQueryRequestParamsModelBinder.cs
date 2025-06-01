@@ -16,6 +16,7 @@ namespace ACS.Admin.Models
                 return Task.CompletedTask;
             }
 
+            string? hostIpv4Addresses = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.HostIpv4Addresses)).FirstValue;
             string? hostRoles = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.HostRoles)).FirstValue;
             string? activeUsers = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.ActiveUsers)).FirstValue;
 
@@ -27,6 +28,7 @@ namespace ACS.Admin.Models
                 UserName = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.UserName)).FirstValue,
                 ActiveUsers = activeUsers?.Split(",", StringSplitOptions.TrimEntries),
                 HostName = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.HostName)).FirstValue,
+                HostIpv4Addresses = hostIpv4Addresses?.Split(",", StringSplitOptions.TrimEntries),
                 HostRoles = hostRoles?.Split(",", StringSplitOptions.TrimEntries),
                 EnvironmentName = bindingContext.ValueProvider.GetValue(nameof(ConfigQueryRequestParams.EnvironmentName)).FirstValue
             };

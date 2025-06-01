@@ -24,15 +24,19 @@ namespace ACS.Shared.Models
 
         [DisplayName("Active Users")]
         [HelpText("Comma-separated list of active users on the host.")]
-        public IEnumerable<string>? ActiveUsers { get; set; }
+        public string[]? ActiveUsers { get; set; }
 
         [DisplayName("Host Name")]
         [HelpText("Fully-qualified host name.")]
         public string? HostName { get; set; }
 
+        [DisplayName("Host IPv4 Address")]
+        [HelpText("Comma-separated list of host IPv4 addresses.")]
+        public string[]? HostIpv4Addresses { get; set; }
+
         [DisplayName("Host Roles")]
         [HelpText("Comma-separated list of host names.")]
-        public IEnumerable<string>? HostRoles { get; set; }
+        public string[]? HostRoles { get; set; }
 
         [DisplayName("Environment Name")]
         [HelpText("Name of the environment (e.g. Production).")]
