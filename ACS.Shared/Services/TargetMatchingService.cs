@@ -1,5 +1,6 @@
 ﻿using ACS.Shared.Models;
 using Serilog;
+using System.Net;
 using System.Text.Json;
 
 namespace ACS.Shared.Services
@@ -47,6 +48,23 @@ namespace ACS.Shared.Services
             if (target.HostName != null)
             {
                 if (requestParams.HostName == null || !target.HostName.IsMatch(requestParams.HostName))
+                {
+                    return false;
+                }
+            }
+
+            // None of the host IPv4 addresses fall within the required CIDR
+            if (target.Ipv4Cidr != null)
+            {
+                if (requestParams.HostIpv4Addresses == null || !requestParams.HostIpv4Addresses.Any(ipAddressStr =>
+                {
+                    if (IPAddress.TryParse(ipAddressStr, out IPAddress? ipAddress))
+                    {
+                        return target.Ipv4Cidr?.Contains(ipAddress) ?? false;
+                    }
+
+                    return false;
+                }))
                 {
                     return false;
                 }

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Net;
+using System.Text.RegularExpressions;
 
 namespace ACS.Shared.Models
 {
@@ -10,6 +11,7 @@ namespace ACS.Shared.Models
         public readonly Regex? UserName;
         public readonly Regex? ActiveUserName;
         public readonly Regex? HostName;
+        public readonly IPNetwork? Ipv4Cidr;
         public readonly Regex? HostRole;
         public readonly Regex? EnvironmentName;
 
@@ -40,6 +42,11 @@ namespace ACS.Shared.Models
             if (!string.IsNullOrEmpty(target.HostNamePattern))
             {
                 HostName = new Regex(target.HostNamePattern, RegexOptions.Compiled);
+            }
+
+            if (!string.IsNullOrEmpty(target.HostIpv4Cidr))
+            {
+                Ipv4Cidr = IPNetwork.Parse(target.HostIpv4Cidr);
             }
 
             if (!string.IsNullOrEmpty(target.HostRolePattern))
