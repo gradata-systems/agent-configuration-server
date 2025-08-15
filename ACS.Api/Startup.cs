@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using System.IO.Compression;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ACS.Api
 {
@@ -101,6 +103,20 @@ namespace ACS.Api
                 services.AddCertificateForwarding(options =>
                 {
                     options.CertificateHeader = authConfig.ForwardedHeader;
+
+                    // Load the certificate from PEM format, instead of decoding from base64
+                    options.HeaderConverter = header =>
+                    {
+                        try
+                        {
+                            return X509Certificate2.CreateFromPem(HttpUtility.UrlDecode(header));
+                        }
+                        catch (CryptographicException ex)
+                        {
+                            Log.Error("Invalid client certificate {Certificate} provided in header", header, ex);
+                            return null;
+                        }
+                    };
                 });
             }
 
