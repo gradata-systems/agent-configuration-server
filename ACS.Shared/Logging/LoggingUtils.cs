@@ -10,6 +10,9 @@ namespace ACS.Shared.Logging
     {
         public static void ConfigureLogging(HostBuilderContext hostingContext, LoggerConfiguration loggerConfiguration)
         {
+            // Write internal Serilog errors to stdout
+            Serilog.Debugging.SelfLog.Enable(message => Console.Error.WriteLine(message));
+
             loggerConfiguration
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .ReadFrom.Configuration(hostingContext.Configuration)
