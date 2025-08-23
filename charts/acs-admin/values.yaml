@@ -71,6 +71,7 @@ publicHostname: admin.acs.internal
 
 ingress:
   enabled: true
+  className: nginx
   annotations: {}
     # kubernetes.io/tls-acme: "true"
 
