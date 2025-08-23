@@ -61,6 +61,8 @@ spec:
               value: {{ .certificateCache.size | quote }}
             - name: Api__Authentication__CertificateCacheTtlSeconds
               value: {{ .certificateCache.ttlSeconds | quote }}
+            - name: Api__Authentication__ValidateCertificateExpiry
+              value: {{ .validateCertificateExpiry | quote }}
             {{- end }}
             {{- with .Values.dataSource }}
             - name: DataSource__Server

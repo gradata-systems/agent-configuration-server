@@ -36,6 +36,7 @@ authentication:
   certificateCache:
     size: 1024
     ttlSeconds: 60
+  validateCertificateExpiry: true
 
 # How frequently to refresh the target/fragment in-memory cache from the database
 cache:
