@@ -87,7 +87,7 @@
         @{
             await Html.RenderPartialAsync("_FragmentSelectionList");
         }
-        <div class="form-group">
+        <div class="form-group fixed-bottom form-action-bar">
             @if (isAdmin || isEditor)
             {
                 <input type="submit" value="Save" class="btn btn-primary" />

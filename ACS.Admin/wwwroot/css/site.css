@@ -48,6 +48,11 @@ nav {
         background-color: rgba(0, 0, 0, 0.3);
     }
 
+.form-action-bar {
+    padding: 0px 10px 10px 15px;
+    background-color: rgba(20, 20, 35, 0.95);
+}
+
 footer {
     padding-top: 10px;
 }

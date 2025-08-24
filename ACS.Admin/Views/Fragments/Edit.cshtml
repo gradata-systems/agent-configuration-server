@@ -59,7 +59,7 @@
         @{
             await Html.RenderPartialAsync("_TargetSelectionList");
         }
-        <div class="form-group">
+        <div class="form-group fixed-bottom form-action-bar">
             @if (isAdmin || isEditor)
             {
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -69,7 +69,7 @@
             {
                 <a asp-action="Index" class="btn btn-secondary">Close</a>
             }
-            
+
             @if (isAdmin || isEditor)
             {
                 <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger delete">Delete</a>
