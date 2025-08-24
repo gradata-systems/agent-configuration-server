@@ -4,30 +4,32 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#bs5/dt-2.3.1/r-3.0.4/sr-1.4.1
+ *   https://datatables.net/download/#bs5/dt-2.3.3/r-3.0.6/sl-3.1.0/sr-1.4.1
  *
  * Included libraries:
- *   DataTables 2.3.1, Responsive 3.0.4, StateRestore 1.4.1
+ *   DataTables 2.3.3, Responsive 3.0.6, Select 3.1.0, StateRestore 1.4.1
  */
 
 :root {
   --dt-row-selected: 13, 110, 253;
   --dt-row-selected-text: 255, 255, 255;
-  --dt-row-selected-link: 9, 10, 11;
+  --dt-row-selected-link: 228, 228, 228;
   --dt-row-stripe: 0, 0, 0;
   --dt-row-hover: 0, 0, 0;
   --dt-column-ordering: 0, 0, 0;
+  --dt-header-align-items: center;
+  --dt-header-vertical-align: middle;
   --dt-html-background: white;
 }
 :root.dark {
   --dt-html-background: rgb(33, 37, 41);
 }
 
-table.dataTable td.dt-control {
+table.dataTable tbody td.dt-control {
   text-align: center;
   cursor: pointer;
 }
-table.dataTable td.dt-control:before {
+table.dataTable tbody td.dt-control:before {
   display: inline-block;
   box-sizing: border-box;
   content: "";
@@ -36,7 +38,7 @@ table.dataTable td.dt-control:before {
   border-bottom: 5px solid transparent;
   border-right: 0px solid transparent;
 }
-table.dataTable tr.dt-hasChild td.dt-control:before {
+table.dataTable tbody tr.dt-hasChild td.dt-control:before {
   border-top: 10px solid rgba(0, 0, 0, 0.5);
   border-left: 5px solid transparent;
   border-bottom: 0px solid transparent;
@@ -111,7 +113,7 @@ table.dataTable thead > tr > td.dt-ordering-asc span.dt-column-order,
 table.dataTable thead > tr > td.dt-ordering-desc span.dt-column-order {
   position: relative;
   width: 12px;
-  height: 20px;
+  height: 24px;
 }
 table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:after, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after, table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order:before, table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order:after, table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:before, table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:after,
 table.dataTable thead > tr > td.dt-orderable-asc span.dt-column-order:before,
@@ -143,7 +145,8 @@ table.dataTable thead > tr > td.dt-ordering-asc span.dt-column-order:before,
 table.dataTable thead > tr > td.dt-ordering-desc span.dt-column-order:after {
   opacity: 0.6;
 }
-table.dataTable thead > tr > th.sorting_desc_disabled span.dt-column-order:after, table.dataTable thead > tr > th.sorting_asc_disabled span.dt-column-order:before,
+table.dataTable thead > tr > th.dt-orderable-none:not(.dt-ordering-asc, .dt-ordering-desc) span.dt-column-order:empty, table.dataTable thead > tr > th.sorting_desc_disabled span.dt-column-order:after, table.dataTable thead > tr > th.sorting_asc_disabled span.dt-column-order:before,
+table.dataTable thead > tr > td.dt-orderable-none:not(.dt-ordering-asc, .dt-ordering-desc) span.dt-column-order:empty,
 table.dataTable thead > tr > td.sorting_desc_disabled span.dt-column-order:after,
 table.dataTable thead > tr > td.sorting_asc_disabled span.dt-column-order:before {
   display: none;
@@ -163,7 +166,7 @@ table.dataTable tfoot > tr > td div.dt-column-header,
 table.dataTable tfoot > tr > td div.dt-column-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: var(--dt-header-align-items);
   gap: 4px;
 }
 table.dataTable thead > tr > th div.dt-column-header span.dt-column-title,
@@ -339,6 +342,7 @@ table.dataTable thead td,
 table.dataTable tfoot th,
 table.dataTable tfoot td {
   text-align: left;
+  vertical-align: var(--dt-header-vertical-align);
 }
 table.dataTable thead th.dt-head-left,
 table.dataTable thead td.dt-head-left,
@@ -448,7 +452,7 @@ table.table.dataTable > tbody > tr.selected > * {
   color: rgb(var(--dt-row-selected-text));
 }
 table.table.dataTable > tbody > tr.selected a {
-  color: rgb(9, 10, 11);
+  color: rgb(228, 228, 228);
   color: rgb(var(--dt-row-selected-link));
 }
 table.table.dataTable.table-striped > tbody > tr:nth-of-type(2n+1) > * {
@@ -820,6 +824,113 @@ div.dtr-bs-modal table.table tr:first-child td {
 table.dataTable.table-bordered th.dtr-control.dtr-hidden + *,
 table.dataTable.table-bordered td.dtr-control.dtr-hidden + * {
   border-left-width: 1px;
+}
+
+
+table.dataTable > tbody > tr > .selected {
+  background-color: rgb(13, 110, 253);
+  color: white;
+}
+table.dataTable > tbody > tr > .dt-select {
+  text-align: center;
+  vertical-align: middle;
+}
+table.dataTable > thead > tr > .dt-select {
+  text-align: center;
+  vertical-align: middle;
+}
+table.dataTable > thead > tr > .dt-select input.dt-select-checkbox {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.dataTable input.dt-select-checkbox {
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-top: 1px;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1em;
+}
+table.dataTable input.dt-select-checkbox:checked:after {
+  display: block;
+  content: "✓";
+  margin-top: -8px;
+}
+table.dataTable input.dt-select-checkbox:indeterminate:after {
+  display: block;
+  position: absolute;
+  content: " ";
+  top: 3px;
+  left: 3px;
+  height: 4px;
+  width: 4px;
+  background-color: black;
+  border-radius: 2px;
+}
+table.dataTable > tbody > tr.selected input.dt-select-checkbox:checked {
+  border: 1px solid;
+}
+table.dataTable > tbody > tr > td.select-checkbox,
+table.dataTable > tbody > tr > th.select-checkbox {
+  position: relative;
+}
+table.dataTable > tbody > tr > td.select-checkbox:before,
+table.dataTable > tbody > tr > th.select-checkbox:before {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  content: " ";
+  margin-top: -6px;
+  margin-left: -6px;
+  border: 1px solid;
+  border-radius: 3px;
+}
+table.dataTable > tbody > tr.selected > td.select-checkbox:before,
+table.dataTable > tbody > tr.selected > th.select-checkbox:before {
+  border: 1px solid;
+  content: "✓";
+  font-size: 20px;
+  line-height: 4px;
+  text-align: center;
+}
+table.dataTable.compact > tbody > tr > td.select-checkbox:before,
+table.dataTable.compact > tbody > tr > th.select-checkbox:before {
+  margin-top: -12px;
+}
+table.dataTable.compact > tbody > tr.selected > td.select-checkbox:after,
+table.dataTable.compact > tbody > tr.selected > th.select-checkbox:after {
+  margin-top: -16px;
+}
+
+div.dt-container span.select-info,
+div.dt-container span.select-item {
+  margin-left: 0.5em;
+}
+
+html.dark table.dataTable input.dt-select-checkbox:indeterminate:after,
+html[data-bs-theme=dark] table.dataTable input.dt-select-checkbox:indeterminate:after {
+  background-color: white;
+}
+
+@media screen and (max-width: 640px) {
+  div.dt-container span.select-info,
+  div.dt-container span.select-item {
+    margin-left: 0;
+    display: block;
+  }
+}
+table.dataTable.table-sm tbody td.select-checkbox::before {
+  margin-top: -9px;
 }
 
 

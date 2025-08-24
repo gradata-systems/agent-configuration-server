@@ -1,0 +1,26 @@
+﻿<script src="~/lib/datatables/datatables.min.js" asp-append-version="true"></script>
+<script type="text/javascript">
+    let table = new DataTable('#dataTable', {
+        select: {
+            style: 'shift-multi',   // or 'os' / 'single'
+            selector: 'td:first-child input[type="checkbox"]',
+        },
+        columnDefs: [
+            {
+                orderable: false,
+                targets: 0
+            }
+        ],
+        order: [[2, 'asc']],
+        paging: false
+    });
+
+    // Select all checked rows on initial load
+    table.rows().every(function () {
+        const row = $(this.node());
+        const checkbox = row.find('input[type="checkbox"]');
+        if (checkbox.prop('checked')) {
+            this.select();
+        }
+    });
+</script>

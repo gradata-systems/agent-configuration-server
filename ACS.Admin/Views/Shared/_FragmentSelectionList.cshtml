@@ -4,11 +4,11 @@
 }
 
 <h3>Linked configuration fragments</h3>
-<table class="table">
+<table class="table" id="dataTable">
     <thead>
         <tr>
             <th class="col-sm-1">Linked</th>
-            <th class="col-sm-1">Fragment Id</th>
+            <th class="col-sm-1">Id</th>
             <th class="col-sm-3">Name</th>
             <th class="col-sm-1">Priority</th>
             <th class="col-sm-5">Description</th>
@@ -19,7 +19,7 @@
         {
             <tr>
                 <td>
-                    <input class="form-check-input" asp-for="@item.Linked" value="@item.Fragment.Id" name="linkedFragmentIds" />
+                    <input class="form-check-input" asp-for="@item.Linked" id="fragment-@item.Fragment.Id" value="@item.Fragment.Id" name="linkedFragmentIds" />
                 </td>
                 <td>
                     <a asp-controller="Fragments" asp-action="Edit" asp-route-id="@item.Fragment.Id" target="_blank">@item.Fragment.Id</a>
