@@ -35,7 +35,7 @@ namespace ACS.Tests
                 EnvironmentName = "development"
             };
 
-            Assert.ThrowsException<InvalidVersionException>(() => _targetMatchingService.IsMatch(target, requestParams));
+            Assert.ThrowsExactly<InvalidVersionException>(() => _targetMatchingService.IsMatch(target, requestParams));
         }
 
         [TestMethod]
