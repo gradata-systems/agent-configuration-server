@@ -63,6 +63,7 @@ logging:
       enabled: false
 
 service:
+  annotations: {}
   type: ClusterIP
   port: 443
 
