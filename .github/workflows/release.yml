@@ -97,12 +97,10 @@ jobs:
           helm lint charts/acs-api
 
           helm package charts/acs-admin \
-            --version "${CHART_VERSION}" \
             --app-version "${RELEASE_TAG}" \
             --destination release-artifacts
 
           helm package charts/acs-api \
-            --version "${CHART_VERSION}" \
             --app-version "${RELEASE_TAG}" \
             --destination release-artifacts
 
