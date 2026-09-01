@@ -46,11 +46,17 @@ jobs:
           echo "API_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-api" >> "$GITHUB_ENV"
 
       - name: Restore
-        run: dotnet restore AgentConfigurationServer.sln
-
+        run: |
+          dotnet restore AgentConfigurationServer.sln \
+            --runtime linux-x64
+      
       - name: Build solution
-        run: dotnet build AgentConfigurationServer.sln --configuration Release --no-restore
-
+        run: |
+          dotnet build AgentConfigurationServer.sln \
+            --configuration Release \
+            --runtime linux-x64 \
+            --no-restore
+      
       - name: Publish ACS.Admin container
         run: |
           dotnet publish ACS.Admin/ACS.Admin.csproj \
@@ -63,7 +69,7 @@ jobs:
             -p:ContainerRepository=${{ env.ADMIN_IMAGE }} \
             -p:ContainerImageTag=${{ env.RELEASE_TAG }} \
             -p:RepositoryUrl=https://github.com/${{ github.repository }}
-
+      
       - name: Publish ACS.Api container
         run: |
           dotnet publish ACS.Api/ACS.Api.csproj \
