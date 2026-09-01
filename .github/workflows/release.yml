@@ -38,18 +38,33 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Login Helm to GHCR
+        shell: bash
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            helm registry login ghcr.io \
+              --username "${{ github.actor }}" \
+              --password-stdin
+
       - name: Set release variables
         shell: bash
         run: |
-          echo "RELEASE_TAG=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          CHART_VERSION="${RELEASE_TAG#v}"
+
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
+          echo "CHART_VERSION=${CHART_VERSION}" >> "$GITHUB_ENV"
+
           echo "ADMIN_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-admin" >> "$GITHUB_ENV"
           echo "API_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-api" >> "$GITHUB_ENV"
-      
+
+          echo "HELM_REGISTRY=oci://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/charts" >> "$GITHUB_ENV"
+
       - name: Build solution
         run: |
           dotnet build AgentConfigurationServer.sln \
             --configuration Release
-      
+
       - name: Publish ACS.Admin container
         run: |
           dotnet publish ACS.Admin/ACS.Admin.csproj \
@@ -59,7 +74,7 @@ jobs:
             -p:ContainerRepository=${{ env.ADMIN_IMAGE }} \
             -p:ContainerImageTag=${{ env.RELEASE_TAG }} \
             -p:RepositoryUrl=https://github.com/${{ github.repository }}
-      
+
       - name: Publish ACS.Api container
         run: |
           dotnet publish ACS.Api/ACS.Api.csproj \
@@ -82,12 +97,25 @@ jobs:
           helm lint charts/acs-api
 
           helm package charts/acs-admin \
+            --version "${CHART_VERSION}" \
             --app-version "${RELEASE_TAG}" \
             --destination release-artifacts
 
           helm package charts/acs-api \
+            --version "${CHART_VERSION}" \
             --app-version "${RELEASE_TAG}" \
             --destination release-artifacts
+
+      - name: Publish Helm charts to GHCR
+        shell: bash
+        run: |
+          helm push \
+            "release-artifacts/acs-admin-${CHART_VERSION}.tgz" \
+            "${HELM_REGISTRY}"
+
+          helm push \
+            "release-artifacts/acs-api-${CHART_VERSION}.tgz" \
+            "${HELM_REGISTRY}"
 
       - name: Attach Helm charts to GitHub release
         env:
