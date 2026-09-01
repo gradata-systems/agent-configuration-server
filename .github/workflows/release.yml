@@ -1,0 +1,105 @@
+name: Build Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set release variables
+        shell: bash
+        run: |
+          echo "RELEASE_TAG=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
+          echo "ADMIN_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-admin" >> "$GITHUB_ENV"
+          echo "API_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-api" >> "$GITHUB_ENV"
+
+      - name: Restore
+        run: dotnet restore AgentConfigurationServer.sln
+
+      - name: Build solution
+        run: dotnet build AgentConfigurationServer.sln --configuration Release --no-restore
+
+      - name: Publish ACS.Admin container
+        run: |
+          dotnet publish ACS.Admin/ACS.Admin.csproj \
+            --configuration Release \
+            --no-restore \
+            --os linux \
+            --arch x64 \
+            /t:PublishContainer \
+            -p:ContainerRegistry=${{ env.REGISTRY }} \
+            -p:ContainerRepository=${{ env.ADMIN_IMAGE }} \
+            -p:ContainerImageTag=${{ env.RELEASE_TAG }} \
+            -p:RepositoryUrl=https://github.com/${{ github.repository }}
+
+      - name: Publish ACS.Api container
+        run: |
+          dotnet publish ACS.Api/ACS.Api.csproj \
+            --configuration Release \
+            --no-restore \
+            --os linux \
+            --arch x64 \
+            /t:PublishContainer \
+            -p:ContainerRegistry=${{ env.REGISTRY }} \
+            -p:ContainerRepository=${{ env.API_IMAGE }} \
+            -p:ContainerImageTag=${{ env.RELEASE_TAG }} \
+            -p:RepositoryUrl=https://github.com/${{ github.repository }}
+
+      - name: Package Helm charts
+        shell: bash
+        run: |
+          mkdir -p release-artifacts
+
+          helm dependency update charts/acs-admin
+          helm dependency update charts/acs-api
+
+          helm lint charts/acs-admin
+          helm lint charts/acs-api
+
+          helm package charts/acs-admin \
+            --app-version "${RELEASE_TAG}" \
+            --destination release-artifacts
+
+          helm package charts/acs-api \
+            --app-version "${RELEASE_TAG}" \
+            --destination release-artifacts
+
+      - name: Attach Helm charts to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${RELEASE_TAG}" \
+            release-artifacts/*.tgz \
+            --clobber
