@@ -49,16 +49,9 @@ jobs:
       - name: Set release variables
         shell: bash
         run: |
-          RELEASE_TAG="${{ github.event.release.tag_name }}"
-          CHART_VERSION="${RELEASE_TAG#v}"
-
-          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
-          echo "CHART_VERSION=${CHART_VERSION}" >> "$GITHUB_ENV"
-
+          echo "RELEASE_TAG=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
           echo "ADMIN_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-admin" >> "$GITHUB_ENV"
           echo "API_IMAGE=${GITHUB_REPOSITORY_OWNER,,}/acs-api" >> "$GITHUB_ENV"
-
-          echo "HELM_REGISTRY=oci://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/charts" >> "$GITHUB_ENV"
 
       - name: Build solution
         run: |
@@ -107,13 +100,10 @@ jobs:
       - name: Publish Helm charts to GHCR
         shell: bash
         run: |
-          helm push \
-            "release-artifacts/acs-admin-${CHART_VERSION}.tgz" \
-            "${HELM_REGISTRY}"
-
-          helm push \
-            "release-artifacts/acs-api-${CHART_VERSION}.tgz" \
-            "${HELM_REGISTRY}"
+          for chart in release-artifacts/*.tgz; do
+            helm push "$chart" \
+              "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/charts"
+          done
 
       - name: Attach Helm charts to GitHub release
         env:
